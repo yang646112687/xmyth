@@ -1,0 +1,13 @@
+{
+  "name": "xmyth-project-management",
+  "version": "1.0.0",
+  "description": "项目一体化平台 - Sprint 1",
+  "main": "index.html",
+  "scripts": {
+    "build": "mkdir -p ../../dist && cp index.html ../../dist/ && echo 'Build completed'",
+    "dev": "python3 -m http.server 8080"
+  },
+  "keywords": ["project-management", "react", "tailwindcss"],
+  "author": "杨荣川",
+  "license": "MIT"
+}

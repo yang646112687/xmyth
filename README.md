@@ -1,7 +1,5 @@
 # 项目一体化平台
 
-## 项目概述
-
 本项目是作者"项目一体化平台"前端原型，基于 PRD 和会议纪要的需求进行开发。
 
 ## 已完成功能 (Sprint 1)
@@ -17,7 +15,7 @@
 ### 2. 项目总览/台账 (ProjectList)
 - 📋 项目卡片展示：项目编码、负责人、进度、预算
 - 🔍 多维度筛选：项目类型、状态、部门
-- 📊 卡片/列表双视图切换
+- 📊 卡片视图
 - 🏷️ 快捷筛选标签
 
 ### 3. 立项管理 (Initiation)
@@ -41,7 +39,7 @@
 
 ## 技术栈
 
-- **框架**: React 18
+- **框架**: React 18 (CDN)
 - **样式**: Tailwind CSS (CDN)
 - **图标**: Lucide Icons
 - **部署**: GitHub Pages
@@ -49,28 +47,18 @@
 ## 项目结构
 
 ```
-client/my-app/
-├── src/
-│   ├── components/
-│   │   ├── ui/           # 基础UI组件
-│   │   └── Layout.tsx    # 布局组件
-│   ├── pages/
-│   │   ├── Dashboard.tsx     # 工作台
-│   │   ├── ProjectList.tsx   # 项目总览
-│   │   ├── Initiation.tsx    # 立项管理
-│   │   ├── Reports.tsx       # 数据中心
-│   │   └── Settings.tsx      # 系统管理
-│   ├── App.tsx
-│   └── index.css
-├── dist/
-│   └── index.html        # 部署文件
-└── package.json
+xmyth/
+├── README.md                # 项目说明
+├── index.html               # 主入口（GitHub Pages）
+└── doc/
+    ├── README.md
+    ├── meetings/
+    │   └── Meeting-20260323.md  # 需求评审会议纪要
+    ├── product/
+    │   └── PRD.md               # 产品需求文档
+    └── prototype/
+        └── 原型设计说明.md
 ```
-
-## 文档
-
-- [产品需求文档 (PRD)](doc/product/PRD-项目一体化平台.md)
-- [需求评审会议纪要](doc/meetings/需求评审会议纪要-20260323.md)
 
 ## 开发计划
 
@@ -95,4 +83,4 @@ client/my-app/
 ### 2026-03-23
 - ✅ 完成 Sprint 1 前端原型开发
 - ✅ 部署到 GitHub Pages
-- ✅ 修复 PRD 和会议纪要的编码问题
+- ✅ 实现工作台、项目总览、立项管理、数据中心、系统管理

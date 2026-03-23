@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>项目一体化平台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    .fade-in { animation: fadeIn 0.3s ease-in; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // 图标组件
+    const Icons = {
+      LayoutDashboard: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>,
+      FolderKanban: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/><path d="M8 10v4"/><path d="M12 10v2"/><path d="M16 10v6"/></svg>,
+      FileText: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>,
+      BarChart3: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>,
+      Settings: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>,
+      Bell: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>,
+      User: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+      Plus: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>,
+      Clock: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
+      AlertTriangle: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="9" y2="13"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>,
+      CheckCircle2: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>,
+      FolderOpen: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"/></svg>,
+      TrendingUp: () => <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>,
+      Calendar: () => <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>,
+      ArrowRight: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>,
+      Search: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>,
+      Filter: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>,
+      Download: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>,
+      Grid3X3: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg>,
+      List: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>,
+      Building2: () => <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 12h4"/><path d="M10 8h4"/><path d="M10 16h4"/><rect width="20" height="20" x="2" y="2" rx="2"/></svg>,
+      Eye: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>,
+      AlertCircle: () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>,
+      DollarSign: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>,
+      Users: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+    };
+
+    // 导航菜单
+    const menuItems = [
+      { id: "dashboard", label: "工作台", icon: "LayoutDashboard" },
+      { id: "projects", label: "项目中心", icon: "FolderKanban" },
+      { id: "initiation", label: "立项管理", icon: "FileText" },
+      { id: "reports", label: "数据中心", icon: "BarChart3" },
+      { id: "settings", label: "系统管理", icon: "Settings" },
+    ];
+
+    // 布局组件
+    function Layout({ children, currentPage, onNavigate }) {
+      return (
+        <div className="min-h-screen bg-gray-50">
+          {/* Header */}
+          <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+            <div className="flex items-center justify-between px-6 h-16">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">PM</span>
+                </div>
+                <span className="font-semibold text-lg">项目一体化平台</span>
+              </div>
+              <div className="flex items-center gap-4">
+                <button className="relative p-2 hover:bg-gray-100 rounded-full">
+                  <Icons.Bell />
+                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                </button>
+                <button className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg">
+                  <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                    <Icons.User />
+                  </div>
+                  <span className="text-sm text-gray-700">管理员</span>
+                </button>
+              </div>
+            </div>
+          </header>
+
+          <div className="flex">
+            {/* Sidebar */}
+            <aside className="w-64 bg-white border-r border-gray-200 min-h-[calc(100vh-64px)]">
+              <nav className="p-4">
+                <ul className="space-y-1">
+                  {menuItems.map((item) => {
+                    const Icon = Icons[item.icon];
+                    const isActive = currentPage === item.id;
+                    return (
+                      <li key={item.id}>
+                        <button
+                          onClick={() => onNavigate(item.id)}
+                          className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                            isActive ? "bg-blue-50 text-blue-600" : "text-gray-700 hover:bg-gray-50"
+                          }`}
+                        >
+                          <Icon />
+                          {item.label}
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </nav>
+            </aside>
+
+            {/* Main Content */}
+            <main className="flex-1 p-6">
+              {children}
+            </main>
+          </div>
+        </div>
+      );
+    }
+
+    // Badge 组件
+    function Badge({ children, variant = "default", className = "" }) {
+      const variants = {
+        default: "bg-gray-100 text-gray-700",
+        success: "bg-green-100 text-green-700",
+        warning: "bg-yellow-100 text-yellow-700",
+        destructive: "bg-red-100 text-red-700",
+        secondary: "bg-gray-100 text-gray-600",
+        outline: "border border-gray-200 text-gray-700",
+        info: "bg-blue-100 text-blue-700",
+      };
+      return (
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${variants[variant]} ${className}`}>
+          {children}
+        </span>
+      );
+    }
+
+    // Button 组件
+    function Button({ children, variant = "default", size = "default", className = "", onClick, disabled }) {
+      const variants = {
+        default: "bg-blue-600 text-white hover:bg-blue-700",
+        outline: "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50",
+        ghost: "text-gray-700 hover:bg-gray-100",
+        destructive: "bg-red-600 text-white hover:bg-red-700",
+      };
+      const sizes = {
+        default: "px-4 py-2",
+        sm: "px-3 py-1.5 text-sm",
+        lg: "px-6 py-3",
+        icon: "p-2",
+      };
+      return (
+        <button
+          onClick={onClick}
+          disabled={disabled}
+          className={`inline-flex items-center justify-center rounded-lg font-medium transition-colors disabled:opacity-50 disabled:pointer-events-none ${variants[variant]} ${sizes[size]} ${className}`}
+        >
+          {children}
+        </button>
+      );
+    }
+
+    // Card 组件
+    function Card({ children, className = "" }) {
+      return (
+        <div className={`bg-white rounded-lg border border-gray-200 shadow-sm ${className}`}>
+          {children}
+        </div>
+      );
+    }
+
+    function CardHeader({ children, className = "" }) {
+      return <div className={`p-6 pb-3 ${className}`}>{children}</div>;
+    }
+
+    function CardTitle({ children, className = "" }) {
+      return <h3 className={`text-lg font-semibold text-gray-900 ${className}`}>{children}</h3>;
+    }
+
+    function CardDescription({ children }) {
+      return <p className="text-sm text-gray-500 mt-1">{children}</p>;
+    }
+
+    function CardContent({ children, className = "" }) {
+      return <div className={`p-6 pt-0 ${className}`}>{children}</div>;
+    }
+
+    // 工作台页面
+    function Dashboard() {
+      const stats = [
+        { title: "进行中的项目", value: 12, icon: "FolderOpen", color: "blue", trend: "+2" },
+        { title: "逾期任务", value: 3, icon: "Clock", color: "red", trend: "-1" },
+        { title: "待处理预警", value: 5, icon: "AlertTriangle", color: "yellow", trend: "+3" },
+        { title: "本月完成", value: 8, icon: "CheckCircle2", color: "green", trend: "+5" },
+      ];
+
+      const todos = [
+        { id: 1, title: "合同审批-设备升级项目", deadline: "今日 18:00", priority: "urgent", type: "审批" },
+        { id: 2, title: "里程碑确认-科研项目", deadline: "明日 12:00", priority: "normal", type: "确认" },
+        { id: 3, title: "立项申请审批", deadline: "2026-03-25", priority: "normal", type: "审批" },
+        { id: 4, title: "预算调整审核", deadline: "2026-03-26", priority: "low", type: "审核" },
+      ];
+
+      const alerts = [
+        { id: 1, title: "合同即将到期", project: "XXX设备升级合同", date: "2026-04-15", level: "high" },
+        { id: 2, title: "进度滞后", project: "XXX科研项目", date: "2026-03-20", level: "medium" },
+        { id: 3, title: "预算超支风险", project: "XXX信息化项目", date: "当前", level: "medium" },
+      ];
+
+      const recentProjects = [
+        { id: 1, name: "设备升级改造项目", code: "PJ2026001", progress: 65, daysLeft: 15, status: "normal" },
+        { id: 2, name: "科研创新项目", code: "PJ2026002", progress: 40, daysLeft: -2, status: "warning" },
+        { id: 3, name: "信息化建设项目", code: "PJ2026003", progress: 80, daysLeft: 30, status: "normal" },
+      ];
+
+      const colorClasses = {
+        blue: "bg-blue-50 text-blue-600",
+        red: "bg-red-50 text-red-600",
+        yellow: "bg-yellow-50 text-yellow-600",
+        green: "bg-green-50 text-green-600",
+      };
+
+      return (
+        <div className="space-y-6 fade-in">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">工作台</h1>
+              <p className="text-gray-500 mt-1">欢迎回来，查看您的项目概览和待办事项</p>
+            </div>
+            <Button className="gap-2">
+              <Icons.Plus />
+              新建项目
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-4 gap-4">
+            {stats.map((stat, index) => {
+              const Icon = Icons[stat.icon];
+              return (
+                <Card key={index}>
+                  <div className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-gray-500">{stat.title}</p>
+                        <div className="flex items-baseline gap-2 mt-1">
+                          <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+                          <span className="text-xs text-green-600 flex items-center">
+                            <Icons.TrendingUp />
+                            {stat.trend}
+                          </span>
+                        </div>
+                      </div>
+                      <div className={`p-3 rounded-lg ${colorClasses[stat.color]}`}>
+                        <Icon />
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+
+          <div className="grid grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle>我的待办</CardTitle>
+                  <Button variant="ghost" size="sm" className="gap-1">
+                    查看全部 <Icons.ArrowRight />
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {todos.map((todo) => (
+                  <div
+                    key={todo.id}
+                    className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors border border-transparent hover:border-gray-200"
+                  >
+                    <div className="flex items-start gap-3">
+                      <Badge
+                        variant={
+                          todo.priority === "urgent" ? "destructive" :
+                          todo.priority === "normal" ? "secondary" : "outline"
+                        }
+                      >
+                        {todo.type}
+                      </Badge>
+                      <div>
+                        <p className="font-medium text-gray-900">{todo.title}</p>
+                        <div className="flex items-center gap-2 mt-1 text-sm text-gray-500">
+                          <Icons.Calendar />
+                          <span>截止时间: {todo.deadline}</span>
+                        </div>
+                      </div>
+                    </div>
+                    {todo.priority === "urgent" && (
+                      <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+                    )}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle>预警消息</CardTitle>
+                  <Button variant="ghost" size="sm">全部标记已读</Button>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {alerts.map((alert) => (
+                  <div
+                    key={alert.id}
+                    className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                  >
+                    <div className={`w-2 h-2 mt-2 rounded-full flex-shrink-0 ${
+                      alert.level === "high" ? "bg-red-500" : "bg-yellow-500"
+                    }`}></div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <p className="font-medium text-gray-900">{alert.title}</p>
+                        <span className="text-xs text-gray-400">{alert.date}</span>
+                      </div>
+                      <p className="text-sm text-gray-500 mt-1">{alert.project}</p>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle>最近访问的项目</CardTitle>
+                <Button variant="ghost" size="sm" className="gap-1">
+                  查看全部 <Icons.ArrowRight />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-3 gap-4">
+                {recentProjects.map((project) => (
+                  <div
+                    key={project.id}
+                    className="p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-lg">🏗️</span>
+                      <h3 className="font-medium text-gray-900 truncate">{project.name}</h3>
+                    </div>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between text-gray-500">
+                        <span>项目编码</span>
+                        <span className="font-mono">{project.code}</span>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-gray-500">
+                          <span>进度</span>
+                          <span>{project.progress}%</span>
+                        </div>
+                        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-blue-500 rounded-full transition-all"
+                            style={{ width: `${project.progress}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between pt-2">
+                        <Badge variant={project.status === "normal" ? "success" : "warning"} className="text-xs">
+                          {project.status === "normal" ? "正常" : "预警"}
+                        </Badge>
+                        <span className={`text-xs ${project.daysLeft < 0 ? "text-red-500" : "text-gray-500"}`}>
+                          {project.daysLeft < 0
+                            ? `逾期 ${Math.abs(project.daysLeft)} 天`
+                            : `剩 ${project.daysLeft} 天`}
+                        </span>
+                      </div>
+                    </div>
+                    <Button variant="outline" size="sm" className="w-full mt-4">
+                      查看详情
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
+
+    // 项目列表页面
+    function ProjectList() {
+      const [viewMode, setViewMode] = useState("card");
+      const [selectedFilter, setSelectedFilter] = useState("全部项目");
+
+      const projects = [
+        { id: 1, name: "设备升级改造项目", code: "PJ2026001", department: "设备管理部", manager: "张三", progress: 80, budget: { total: 500, used: 420 }, status: "normal", daysLeft: 15, type: "设备改造", icon: "🏭" },
+        { id: 2, name: "科研创新项目", code: "PJ2026002", department: "技术中心", manager: "李四", progress: 60, budget: { total: 200, used: 180 }, status: "warning", daysLeft: -2, type: "科研", icon: "🔬" },
+        { id: 3, name: "信息化建设项目", code: "PJ2026003", department: "信息中心", manager: "王五", progress: 50, budget: { total: 300, used: 150 }, status: "normal", daysLeft: 30, type: "信息化", icon: "💻" },
+        { id: 4, name: "产能扩建项目", code: "PJ2026004", department: "生产部", manager: "赵六", progress: 35, budget: { total: 800, used: 280 }, status: "normal", daysLeft: 90, type: "基建", icon: "🏗️" },
+        { id: 5, name: "安全环保改造项目", code: "PJ2026005", department: "安全环保部", manager: "孙七", progress: 90, budget: { total: 150, used: 135 }, status: "warning", daysLeft: 5, type: "环保", icon: "🌿" },
+        { id: 6, name: "质量检测中心项目", code: "PJ2026006", department: "质量部", manager: "周八", progress: 25, budget: { total: 400, used: 100 }, status: "normal", daysLeft: 120, type: "质检", icon: "🔍" },
+      ];
+
+      const filterOptions = [
+        { label: "全部项目", count: 128 },
+        { label: "进行中", count: 56 },
+        { label: "已逾期", count: 8 },
+        { label: "本月到期", count: 12 },
+        { label: "预算超支", count: 5 },
+      ];
+
+      return (
+        <div className="space-y-6 fade-in">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">项目总览</h1>
+              <p className="text-gray-500 mt-1">查看和管理所有项目，共 {projects.length} 个项目</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <Button variant="outline" className="gap-2">
+                <Icons.Download />
+                导出
+              </Button>
+              <Button className="gap-2">
+                <Icons.Plus />
+                新建项目
+              </Button>
+            </div>
+          </div>
+
+          <Card>
+            <div className="p-4">
+              <div className="flex flex-wrap items-center gap-4">
+                <div className="relative flex-1 min-w-[300px]">
+                  <Icons.Search />
+                  <input
+                    type="text"
+                    placeholder="搜索项目名称、编码、负责人..."
+                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <select className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option>全部类型</option>
+                    <option>设备改造</option>
+                    <option>科研</option>
+                    <option>信息化</option>
+                    <option>基建</option>
+                  </select>
+                  <select className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option>全部状态</option>
+                    <option>正常</option>
+                    <option>预警</option>
+                    <option>延期</option>
+                  </select>
+                  <Button variant="outline" className="gap-2">
+                    <Icons.Filter />
+                    筛选
+                  </Button>
+                </div>
+                <div className="flex items-center gap-1 ml-auto">
+                  <button
+                    onClick={() => setViewMode("card")}
+                    className={`p-2 rounded ${viewMode === "card" ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:text-gray-600"}`}
+                  >
+                    <Icons.Grid3X3 />
+                  </button>
+                  <button
+                    onClick={() => setViewMode("list")}
+                    className={`p-2 rounded ${viewMode === "list" ? "bg-blue-50 text-blue-600" : "text-gray-400 hover:text-gray-600"}`}
+                  >
+                    <Icons.List />
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100">
+                {filterOptions.map((option) => (
+                  <button
+                    key={option.label}
+                    onClick={() => setSelectedFilter(option.label)}
+                    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                      selectedFilter === option.label
+                        ? "bg-blue-600 text-white"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                    }`}
+                  >
+                    {option.label} ({option.count})
+                  </button>
+                ))}
+              </div>
+            </div>
+          </Card>
+
+          {viewMode === "card" ? (
+            <div className="grid grid-cols-3 gap-4">
+              {projects.map((project) => (
+                <Card key={project.id} className="hover:shadow-lg transition-shadow">
+                  <div className="p-5">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">{project.icon}</span>
+                        <div>
+                          <h3 className="font-semibold text-gray-900 line-clamp-1">{project.name}</h3>
+                          <p className="text-xs text-gray-500 font-mono">{project.code}</p>
+                        </div>
+                      </div>
+                      <Badge variant={project.status === "normal" ? "success" : "warning"}>
+                        {project.status === "normal" ? "正常" : "预警"}
+                      </Badge>
+                    </div>
+
+                    <div className="space-y-2 text-sm mb-4">
+                      <div className="flex justify-between">
+                        <span className="text-gray-500 flex items-center gap-1">
+                          <Icons.Building2 />
+                          {project.department}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-500">负责人</span>
+                        <span className="text-gray-700">{project.manager}</span>
+                      </div>
+                    </div>
+
+                    <div className="mb-4">
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="text-gray-500">进度</span>
+                        <span className="font-medium text-gray-700">{project.progress}%</span>
+                      </div>
+                      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all ${project.status === "normal" ? "bg-blue-500" : "bg-yellow-500"}`}
+                          style={{ width: `${project.progress}%` }}
+                        ></div>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-between text-sm mb-4 p-3 bg-gray-50 rounded-lg">
+                      <span className="text-gray-500">预算使用</span>
+                      <span className="font-medium">
+                        <span className="text-gray-900">{project.budget.used}</span>
+                        <span className="text-gray-400"> / {project.budget.total}万</span>
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                      <span className={`text-sm ${project.daysLeft < 0 ? "text-red-500" : "text-gray-500"}`}>
+                        {project.daysLeft < 0
+                          ? `逾期 ${Math.abs(project.daysLeft)} 天`
+                          : `剩余 ${project.daysLeft} 天`}
+                      </span>
+                      <Button size="sm" variant="outline">查看详情</Button>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">项目信息</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">部门/负责人</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">进度</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">预算</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">状态</th>
+                      <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">操作</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {projects.map((project) => (
+                      <tr key={project.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-4">
+                          <div className="flex items-center gap-3">
+                            <span className="text-xl">{project.icon}</span>
+                            <div>
+                              <p className="font-medium text-gray-900">{project.name}</p>
+                              <p className="text-xs text-gray-500 font-mono">{project.code}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-4 py-4 text-sm text-gray-700">
+                          <p>{project.department}</p>
+                          <p className="text-gray-500">{project.manager}</p>
+                        </td>
+                        <td className="px-4 py-4">
+                          <div className="w-24">
+                            <div className="flex justify-between text-xs mb-1">
+                              <span className="text-gray-500">{project.progress}%</span>
+                            </div>
+                            <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                              <div
+                                className={`h-full rounded-full ${project.status === "normal" ? "bg-blue-500" : "bg-yellow-500"}`}
+                                style={{ width: `${project.progress}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-4 py-4 text-sm text-gray-700">
+                          {project.budget.used} / {project.budget.total}万
+                        </td>
+                        <td className="px-4 py-4">
+                          <Badge variant={project.status === "normal" ? "success" : "warning"}>
+                            {project.status === "normal" ? "正常" : "预警"}
+                          </Badge>
+                        </td>
+                        <td className="px-4 py-4 text-right">
+                          <Button size="sm" variant="outline">查看</Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          )}
+
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-gray-500">显示 1-6 条，共 128 条</p>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" disabled>上一页</Button>
+              <Button variant="outline" size="sm" className="bg-blue-50 text-blue-600">1</Button>
+              <Button variant="outline" size="sm">2</Button>
+              <Button variant="outline" size="sm">3</Button>
+              <span className="text-gray-400">...</span>
+              <Button variant="outline" size="sm">22</Button>
+              <Button variant="outline" size="sm">下一页</Button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // 立项管理页面
+    function Initiation() {
+      const [showDetail, setShowDetail] = useState(false);
+
+      const initiationList = [
+        { id: "INIT2026001", projectName: "智能仓储系统建设项目", applicant: "张三", department: "物流中心", applyDate: "2026-03-20", budget: 280, status: "pending", currentStep: "部门负责人审批", priority: "high" },
+        { id: "INIT2026002", projectName: "生产线自动化改造项目", applicant: "李四", department: "生产部", applyDate: "2026-03-19", budget: 520, status: "approved", currentStep: "已通过", priority: "high" },
+        { id: "INIT2026003", projectName: "员工培训中心建设项目", applicant: "王五", department: "人力资源部", applyDate: "2026-03-18", budget: 150, status: "rejected", currentStep: "已驳回", priority: "normal" },
+        { id: "INIT2026004", projectName: "环保监测设备升级项目", applicant: "赵六", department: "安全环保部", applyDate: "2026-03-17", budget: 180, status: "processing", currentStep: "财务审核", priority: "high" },
+        { id: "INIT2026005", projectName: "数据中心扩容项目", applicant: "孙七", department: "信息中心", applyDate: "2026-03-16", budget: 350, status: "pending", currentStep: "部门负责人审批", priority: "normal" },
+      ];
+
+      const statusConfig = {
+        pending: { label: "待审批", color: "warning" },
+        processing: { label: "审批中", color: "info" },
+        approved: { label: "已通过", color: "success" },
+        rejected: { label: "已驳回", color: "destructive" },
+      };
+
+      if (showDetail) {
+        return (
+          <div className="space-y-6 fade-in">
+            <div className="flex items-center gap-4">
+              <Button variant="outline" onClick={() => setShowDetail(false)}>
+                ← 返回列表
+              </Button>
+              <h1 className="text-2xl font-bold text-gray-900">立项申请详情</h1>
+            </div>
+
+            <div className="grid grid-cols-3 gap-6">
+              <div className="col-span-2 space-y-6">
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle>智能仓储系统建设项目</CardTitle>
+                        <CardDescription>申请编号: INIT2026001</CardDescription>
+                      </div>
+                      <Badge variant="warning">待审批</Badge>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="p-4 bg-gray-50 rounded-lg">
+                        <p className="text-sm text-gray-500 mb-1">申请部门</p>
+                        <p className="font-medium text-gray-900">物流中心</p>
+                      </div>
+                      <div className="p-4 bg-gray-50 rounded-lg">
+                        <p className="text-sm text-gray-500 mb-1">申请人</p>
+                        <p className="font-medium text-gray-900">张三</p>
+                      </div>
+                      <div className="p-4 bg-gray-50 rounded-lg">
+                        <p className="text-sm text-gray-500 mb-1">申请日期</p>
+                        <p className="font-medium text-gray-900">2026-03-20</p>
+                      </div>
+                      <div className="p-4 bg-gray-50 rounded-lg">
+                        <p className="text-sm text-gray-500 mb-1">项目预算</p>
+                        <p className="font-medium text-gray-900">280 万元</p>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4 className="font-medium text-gray-900 mb-3">项目背景</h4>
+                      <p className="text-gray-600 leading-relaxed">
+                        随着公司业务的快速发展，现有的仓储系统已无法满足生产需求。
+                        本项目旨在通过技术升级和设备改造，提升仓储效率，降低运营成本。
+                      </p>
+                    </div>
+
+                    <div>
+                      <h4 className="font-medium text-gray-900 mb-3">项目目标</h4>
+                      <ul className="list-disc list-inside text-gray-600 space-y-1">
+                        <li>提升仓储效率 30% 以上</li>
+                        <li>降低运营成本 20%</li>
+                        <li>实现自动化、智能化管理</li>
+                      </ul>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="space-y-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">审批流程</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="relative space-y-6">
+                      {[
+                        { name: "申请人提交", status: "completed", time: "2026-03-20 10:30" },
+                        { name: "部门负责人审批", status: "current", time: "审批中" },
+                        { name: "财务审核", status: "pending", time: "" },
+                        { name: "分管领导审批", status: "pending", time: "" },
+                      ].map((step, index) => (
+                        <div key={index} className="flex gap-4">
+                          <div className="flex flex-col items-center">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                              step.status === "completed" ? "bg-green-500 text-white" :
+                              step.status === "current" ? "bg-blue-500 text-white" :
+                              "bg-gray-200 text-gray-400"
+                            }`}>
+                              {step.status === "completed" ? "✓" : index + 1}
+                            </div>
+                          </div>
+                          <div className="flex-1 pt-1">
+                            <p className={`font-medium ${step.status === "pending" ? "text-gray-400" : "text-gray-900"}`}>
+                              {step.name}
+                            </p>
+                            {step.time && (
+                              <p className={`text-xs mt-1 ${step.status === "current" ? "text-blue-500" : "text-gray-500"}`}>
+                                {step.time}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">审批操作</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <textarea
+                      placeholder="请输入审批意见..."
+                      className="w-full h-24 p-3 border border-gray-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    ></textarea>
+                    <div className="flex gap-3">
+                      <Button className="flex-1 bg-green-600 hover:bg-green-700">通过</Button>
+                      <Button variant="destructive" className="flex-1">驳回</Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div className="space-y-6 fade-in">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">立项管理</h1>
+              <p className="text-gray-500 mt-1">管理项目立项申请和审批流程</p>
+            </div>
+            <Button className="gap-2">
+              <Icons.Plus />
+              新建立项申请
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-4 gap-4">
+            {[
+              { label: "全部申请", count: 128, color: "blue" },
+              { label: "待审批", count: 15, color: "yellow" },
+              { label: "已通过", count: 98, color: "green" },
+              { label: "已驳回", count: 15, color: "red" },
+            ].map((stat) => (
+              <Card key={stat.label} className="cursor-pointer hover:shadow-md transition-shadow">
+                <div className="p-4">
+                  <p className="text-sm text-gray-500">{stat.label}</p>
+                  <p className={`text-2xl font-bold mt-1 text-${stat.color}-600`}>{stat.count}</p>
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          <Card>
+            <div className="p-4">
+              <div className="flex items-center gap-4">
+                <div className="relative flex-1 max-w-md">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2">
+                    <Icons.Search />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="搜索项目名称、申请编号..."
+                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <Button variant="outline" className="gap-2">
+                  <Icons.Filter />
+                  筛选
+                </Button>
+              </div>
+            </div>
+          </Card>
+
+          <Card>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">申请信息</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">申请部门</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">预算金额</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">申请日期</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">当前环节</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">状态</th>
+                    <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">操作</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {initiationList.map((item) => {
+                    const config = statusConfig[item.status];
+                    return (
+                      <tr key={item.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-4">
+                          <div>
+                            <p className="font-medium text-gray-900">{item.projectName}</p>
+                            <p className="text-xs text-gray-500 font-mono">{item.id}</p>
+                          </div>
+                        </td>
+                        <td className="px-4 py-4 text-sm text-gray-700">
+                          <p>{item.department}</p>
+                          <p className="text-gray-500">{item.applicant}</p>
+                        </td>
+                        <td className="px-4 py-4 text-sm text-gray-700">{item.budget} 万元</td>
+                        <td className="px-4 py-4 text-sm text-gray-700">{item.applyDate}</td>
+                        <td className="px-4 py-4 text-sm text-gray-700">{item.currentStep}</td>
+                        <td className="px-4 py-4">
+                          <Badge variant={config.color}>{config.label}</Badge>
+                        </td>
+                        <td className="px-4 py-4 text-right">
+                          <Button size="sm" variant="outline" onClick={() => setShowDetail(true)}>
+                            <Icons.Eye />
+                            查看
+                          </Button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        </div>
+      );
+    }
+
+    // 数据中心页面
+    function Reports() {
+      const dashboardStats = [
+        { title: "项目总数", value: 128, change: "+12", trend: "up", icon: "CheckCircle2", color: "blue" },
+        { title: "进行中项目", value: 56, change: "+5", trend: "up", icon: "Clock", color: "yellow" },
+        { title: "项目总预算", value: "2.8亿", change: "+15%", trend: "up", icon: "DollarSign", color: "green" },
+        { title: "预算执行率", value: "78%", change: "+3%", trend: "up", icon: "TrendingUp", color: "blue" },
+      ];
+
+      const colorClasses = {
+        blue: "bg-blue-50 text-blue-600",
+        yellow: "bg-yellow-50 text-yellow-600",
+        green: "bg-green-50 text-green-600",
+      };
+
+      return (
+        <div className="space-y-6 fade-in">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">数据中心</h1>
+            <p className="text-gray-500 mt-1">项目全览统计与风险预警</p>
+          </div>
+
+          <div className="grid grid-cols-4 gap-4">
+            {dashboardStats.map((stat, index) => {
+              const Icon = Icons[stat.icon];
+              return (
+                <Card key={index}>
+                  <div className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-gray-500">{stat.title}</p>
+                        <div className="flex items-baseline gap-2 mt-1">
+                          <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+                          <span className="text-xs text-green-600 flex items-center">
+                            ↑ {stat.change}
+                          </span>
+                        </div>
+                      </div>
+                      <div className={`p-3 rounded-lg ${colorClasses[stat.color]}`}>
+                        <Icon />
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
+
+          <div className="grid grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>部门项目分布</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {[
+                    { name: "设备管理部", projects: 24, budget: 5200, used: 4100 },
+                    { name: "技术中心", projects: 18, budget: 3800, used: 2900 },
+                    { name: "信息中心", projects: 15, budget: 3200, used: 2100 },
+                    { name: "生产部", projects: 12, budget: 4800, used: 3600 },
+                  ].map((dept) => (
+                    <div key={dept.name} className="flex items-center gap-4">
+                      <div className="w-24 text-sm text-gray-600">{dept.name}</div>
+                      <div className="flex-1">
+                        <div className="flex justify-between text-xs mb-1">
+                          <span className="text-gray-500">{dept.projects} 个项目</span>
+                          <span className="text-gray-700">{Math.round((dept.used / dept.budget) * 100)}%</span>
+                        </div>
+                        <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-blue-500 rounded-full"
+                            style={{ width: `${(dept.used / dept.budget) * 100}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-medium text-gray-900">{(dept.budget / 100).toFixed(0)}万</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>风险预警</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {[
+                    { type: "预算超支", count: 5, level: "high" },
+                    { type: "进度滞后", count: 8, level: "medium" },
+                    { type: "即将到期", count: 12, level: "low" },
+                  ].map((alert) => (
+                    <div key={alert.type} className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-2 h-2 rounded-full ${
+                          alert.level === "high" ? "bg-red-500" :
+                          alert.level === "medium" ? "bg-yellow-500" : "bg-blue-500"
+                        }`}></div>
+                        <span className="font-medium text-gray-900">{alert.type}</span>
+                      </div>
+                      <Badge variant={alert.level === "high" ? "destructive" : alert.level === "medium" ? "warning" : "secondary"}>
+                        {alert.count} 个
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      );
+    }
+
+    // 系统管理页面
+    function Settings() {
+      const categories = [
+        { id: "org", title: "组织架构", description: "管理部门、岗位和人员信息", icon: "Building2", items: ["部门管理", "岗位管理", "人员管理"] },
+        { id: "role", title: "角色权限", description: "配置系统角色和权限分配", icon: "Shield", items: ["角色管理", "权限配置", "数据权限"] },
+        { id: "user", title: "用户管理", description: "管理系统用户账号", icon: "Users", items: ["用户列表", "账号审批", "登录日志"] },
+      ];
+
+      return (
+        <div className="space-y-6 fade-in">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">系统管理</h1>
+            <p className="text-gray-500 mt-1">系统配置和管理功能</p>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4">
+            {categories.map((cat) => (
+              <Card key={cat.id} className="hover:shadow-lg transition-shadow cursor-pointer">
+                <div className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 bg-blue-50 rounded-lg">
+                      <Icons[cat.icon] />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-900">{cat.title}</h3>
+                      <p className="text-sm text-gray-500 mt-1">{cat.description}</p>
+                      <div className="flex flex-wrap gap-2 mt-3">
+                        {cat.items.map((item) => (
+                          <Badge key={item} variant="secondary" className="text-xs">{item}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>系统信息</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-500">系统版本</span>
+                    <span className="font-medium">v1.0.0</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-500">最后更新</span>
+                    <span className="font-medium">2026-03-23</span>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-500">在线用户</span>
+                    <span className="font-medium">128 人</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-500">系统运行时间</span>
+                    <span className="font-medium">15 天 8 小时</span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
+
+    // 主应用
+    function App() {
+      const [currentPage, setCurrentPage] = useState("dashboard");
+
+      const renderPage = () => {
+        switch (currentPage) {
+          case "dashboard": return <Dashboard />;
+          case "projects": return <ProjectList />;
+          case "initiation": return <Initiation />;
+          case "reports": return <Reports />;
+          case "settings": return <Settings />;
+          default: return <Dashboard />;
+        }
+      };
+
+      return (
+        <Layout currentPage={currentPage} onNavigate={setCurrentPage}>
+          {renderPage()}
+        </Layout>
+      );
+    }
+
+    // 渲染应用
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

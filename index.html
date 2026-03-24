@@ -11,29 +11,23 @@
       body { margin: 0; padding: 0; background: #F7F8FA; font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
       :root {
         --junpin-green: #0A5C36;
-        --junpin-green-dark: #084C2C;
-        --junpin-green-light: #F0F7F4;
         --text-primary: #333333;
         --text-secondary: #666666;
-        --text-tertiary: #999999;
         --border-color: #E5E5E5;
-        --success: #00B42A;
-        --warning: #FF7D00;
-        --danger: #F53F3F;
       }
       .text-junpin { color: var(--junpin-green); }
       .bg-junpin { background-color: var(--junpin-green); }
-      .bg-junpin-light { background-color: var(--junpin-green-light); }
-      .border-junpin { border-color: var(--junpin-green); }
-      .btn-junpin { background-color: var(--junpin-green); color: white; transition: all 0.2s ease; }
-      .btn-junpin:hover { background-color: var(--junpin-green-dark); transform: scale(0.98); }
+      .btn-junpin { background-color: var(--junpin-green); color: white; }
+      .btn-junpin:hover { background-color: #084C2C; }
       .tab-active { color: var(--junpin-green); border-bottom: 2px solid var(--junpin-green); }
-      .card-hover { transition: all 0.3s ease; }
-      .card-hover:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12); border-color: var(--junpin-green); }
-      .row-hover:hover { background-color: var(--junpin-green-light); }
-      .view-switch-btn.active { color: var(--junpin-green); border-bottom: 2px solid var(--junpin-green); }
       .page { display: none; }
       .page.active { display: block; }
+      .submenu { display: none; position: absolute; top: 100%; left: 0; min-width: 200px; background: white; border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); z-index: 100; }
+      .nav-item:hover .submenu { display: block; }
+      .submenu-item { padding: 10px 16px; cursor: pointer; transition: background 0.2s; }
+      .submenu-item:hover { background-color: #F0F7F4; }
+      .detail-content { display: none; }
+      .detail-content.active { display: block; }
     </style>
   </head>
   <body>
@@ -57,6 +51,69 @@
                 <i class="lucide-building-2"></i>
                 项目总览
               </button>
+              <div class="relative nav-item">
+                <button class="px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium text-[#666666] hover:text-[#333333]">
+                  <i class="lucide-briefcase"></i>
+                  业务中心
+                  <i class="lucide-chevron-down text-xs"></i>
+                </button>
+                <div class="submenu">
+                  <div class="submenu-item" onclick="showPage('procurement')">
+                    <i class="lucide-package mr-2"></i>
+                    采购管理
+                  </div>
+                  <div class="submenu-item" onclick="showPage('contracts')">
+                    <i class="lucide-file-check mr-2"></i>
+                    合同管理
+                  </div>
+                </div>
+              </div>
+              <div class="relative nav-item">
+                <button class="px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium text-[#666666] hover:text-[#333333]">
+                  <i class="lucide-bar-chart-3"></i>
+                  数据中心
+                  <i class="lucide-chevron-down text-xs"></i>
+                </button>
+                <div class="submenu">
+                  <div class="submenu-item" onclick="showPage('dashboard')">
+                    <i class="lucide-layout-dashboard mr-2"></i>
+                    领导驾驶舱
+                  </div>
+                  <div class="submenu-item" onclick="showPage('reports')">
+                    <i class="lucide-file-text mr-2"></i>
+                    统计报表
+                  </div>
+                </div>
+              </div>
+              <div class="relative nav-item">
+                <button class="px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium text-[#666666] hover:text-[#333333]">
+                  <i class="lucide-settings"></i>
+                  系统管理
+                  <i class="lucide-chevron-down text-xs"></i>
+                </button>
+                <div class="submenu">
+                  <div class="submenu-item" onclick="showPage('organization')">
+                    <i class="lucide-users mr-2"></i>
+                    组织架构
+                  </div>
+                  <div class="submenu-item" onclick="showPage('roles')">
+                    <i class="lucide-shield mr-2"></i>
+                    角色权限
+                  </div>
+                  <div class="submenu-item" onclick="showPage('workflow')">
+                    <i class="lucide-git-branch mr-2"></i>
+                    流程配置
+                  </div>
+                  <div class="submenu-item" onclick="showPage('warnings')">
+                    <i class="lucide-alert-triangle mr-2"></i>
+                    预警规则
+                  </div>
+                  <div class="submenu-item" onclick="showPage('logs')">
+                    <i class="lucide-history mr-2"></i>
+                    系统日志
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="flex items-center gap-4">
@@ -82,124 +139,22 @@
             <p class="text-[#666666]">项目管理数字化</p>
           </div>
           
-          <!-- Stats Cards -->
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-            <div class="card-hover bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm">
+            <div class="bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm">
               <p class="text-[#666666] text-sm mb-2">项目总数</p>
-              <div class="flex items-baseline justify-between">
-                <p class="text-3xl font-bold text-[#333333]">128</p>
-                <span class="text-sm font-medium flex items-center gap-1 text-junpin">
-                  <i class="lucide-trending-up"></i>
-                  +12
-                </span>
-              </div>
+              <p class="text-3xl font-bold text-[#333333]">128</p>
             </div>
-            <div class="card-hover bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm">
+            <div class="bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm">
               <p class="text-[#666666] text-sm mb-2">进行中</p>
-              <div class="flex items-baseline justify-between">
-                <p class="text-3xl font-bold text-[#333333]">45</p>
-                <span class="text-sm font-medium flex items-center gap-1 text-junpin">
-                  <i class="lucide-trending-up"></i>
-                  +5
-                </span>
-              </div>
+              <p class="text-3xl font-bold text-[#333333]">45</p>
             </div>
-            <div class="card-hover bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm">
+            <div class="bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm">
               <p class="text-[#666666] text-sm mb-2">已逾期</p>
-              <div class="flex items-baseline justify-between">
-                <p class="text-3xl font-bold text-[#333333]">8</p>
-                <span class="text-sm font-medium flex items-center gap-1 text-[#00B42A]">
-                  <i class="lucide-trending-down"></i>
-                  +3
-                </span>
-              </div>
+              <p class="text-3xl font-bold text-[#333333]">8</p>
             </div>
-            <div class="card-hover bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm">
+            <div class="bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm">
               <p class="text-[#666666] text-sm mb-2">风险项目</p>
-              <div class="flex items-baseline justify-between">
-                <p class="text-3xl font-bold text-[#333333]">12</p>
-                <span class="text-sm font-medium flex items-center gap-1 text-[#00B42A]">
-                  <i class="lucide-trending-down"></i>
-                  +2
-                </span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2">
-              <div class="bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm">
-                <div class="flex items-center justify-between mb-5">
-                  <h2 class="text-lg font-semibold text-[#333333]">项目健康度 TOP 5</h2>
-                  <button onclick="showPage('projects')" class="text-junpin hover:underline text-sm font-medium">
-                    查看全部 <i class="lucide-arrow-right ml-1"></i>
-                  </button>
-                </div>
-                <div class="space-y-4">
-                  <div class="flex items-center justify-between p-3 rounded-lg hover:bg-[#F0F7F4] cursor-pointer transition-colors" onclick="showPage('detail')">
-                    <div class="flex items-center gap-3">
-                      <div class="w-10 h-10 rounded-lg bg-[#F0F7F4] flex items-center justify-center">
-                        <i class="lucide-building text-junpin"></i>
-                      </div>
-                      <div>
-                        <p class="font-medium text-[#333333]">包装车间智能化升级</p>
-                        <p class="text-sm text-[#666666]">PJ2026001 · 业务部门A</p>
-                      </div>
-                    </div>
-                    <div class="flex items-center gap-4">
-                      <div class="text-right">
-                        <p class="text-sm font-medium text-[#333333]">82%</p>
-                        <div class="w-24 h-1.5 bg-[#E5E5E5] rounded-full overflow-hidden mt-1">
-                          <div class="h-full bg-junpin rounded-full" style="width: 82%"></div>
-                        </div>
-                      </div>
-                      <span class="text-xs font-medium px-2 py-1 rounded-full bg-[#E8F7F0] text-[#00B42A]">正常</span>
-                    </div>
-                  </div>
-                  <div class="flex items-center justify-between p-3 rounded-lg hover:bg-[#F0F7F4] cursor-pointer transition-colors" onclick="showPage('detail')">
-                    <div class="flex items-center gap-3">
-                      <div class="w-10 h-10 rounded-lg bg-[#F0F7F4] flex items-center justify-center">
-                        <i class="lucide-building text-junpin"></i>
-                      </div>
-                      <div>
-                        <p class="font-medium text-[#333333]">质量管控AI平台</p>
-                        <p class="text-sm text-[#666666]">PJ2026002 · 业务部门B</p>
-                      </div>
-                    </div>
-                    <div class="flex items-center gap-4">
-                      <div class="text-right">
-                        <p class="text-sm font-medium text-[#333333]">45%</p>
-                        <div class="w-24 h-1.5 bg-[#E5E5E5] rounded-full overflow-hidden mt-1">
-                          <div class="h-full bg-junpin rounded-full" style="width: 45%"></div>
-                        </div>
-                      </div>
-                      <span class="text-xs font-medium px-2 py-1 rounded-full bg-[#FFF7E8] text-[#FF7D00]">预警</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div>
-              <div class="bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm">
-                <div class="flex items-center justify-between mb-5">
-                  <h2 class="text-lg font-semibold text-[#333333]">预警消息</h2>
-                </div>
-                <div class="space-y-3">
-                  <div class="p-3 rounded-lg border-l-2 bg-[#FDECEC] border-l-[#F53F3F]">
-                    <p class="font-medium text-sm text-[#F53F3F]">基酒储存设施 - 进度逾期</p>
-                    <p class="text-xs text-[#666666] mt-1">8天前</p>
-                  </div>
-                  <div class="p-3 rounded-lg border-l-2 bg-[#FFF7E8] border-l-[#FF7D00]">
-                    <p class="font-medium text-sm text-[#FF7D00]">质量管控平台 - 预算超支</p>
-                    <p class="text-xs text-[#666666] mt-1">2天前</p>
-                  </div>
-                  <div class="p-3 rounded-lg border-l-2 bg-[#FFF7E8] border-l-[#FF7D00]">
-                    <p class="font-medium text-sm text-[#FF7D00]">包装车间升级 - 合同即将到期</p>
-                    <p class="text-xs text-[#666666] mt-1">3天后</p>
-                  </div>
-                </div>
-              </div>
+              <p class="text-3xl font-bold text-[#333333]">12</p>
             </div>
           </div>
         </div>
@@ -208,203 +163,19 @@
       <!-- Projects Page -->
       <div id="page-projects" class="page">
         <div class="max-w-7xl mx-auto px-5 py-8">
-          <div class="flex items-center justify-between mb-6">
-            <div>
-              <h1 class="text-2xl font-bold text-[#333333] mb-2">项目总览</h1>
-              <p class="text-[#666666]">共 4 个项目</p>
-            </div>
-            <div class="flex items-center gap-4">
-              <div class="flex bg-white rounded-lg border border-[#E5E5E5] p-1">
-                <button onclick="setViewMode('list')" id="view-btn-list" class="view-switch-btn px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors text-[#666666]">
-                  <i class="lucide-list"></i>
-                  列表
-                </button>
-                <button onclick="setViewMode('card')" id="view-btn-card" class="view-switch-btn active px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors">
-                  <i class="lucide-grid-3x3"></i>
-                  卡片
-                </button>
+          <h1 class="text-2xl font-bold text-[#333333] mb-8">项目总览</h1>
+          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+            <div class="bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm cursor-pointer" onclick="showPage('detail')">
+              <h3 class="font-semibold text-[#333333] mb-2">包装车间智能化升级</h3>
+              <p class="text-sm text-[#666666] mb-4">PJ2026001 · 张明远</p>
+              <div class="flex items-center justify-between text-sm mb-2">
+                <span class="text-[#666666]">进度</span>
+                <span class="font-medium text-[#333333]">82%</span>
               </div>
-              <button class="btn-junpin px-4 py-2 rounded-md flex items-center gap-2 font-medium">
-                <i class="lucide-plus"></i>
-                新建项目
-              </button>
-            </div>
-          </div>
-          
-          <!-- Filters -->
-          <div class="bg-white rounded-lg border border-[#E5E5E5] p-4 shadow-sm mb-6">
-            <div class="flex flex-wrap items-center gap-3">
-              <select class="px-3 py-2 rounded-md border border-[#E5E5E5] text-sm text-[#333333] focus:outline-none focus:border-junpin">
-                <option>全部类型</option>
-                <option>投资类</option>
-                <option>设备类</option>
-                <option>科研类</option>
-                <option>信息化类</option>
-              </select>
-              <select class="px-3 py-2 rounded-md border border-[#E5E5E5] text-sm text-[#333333] focus:outline-none focus:border-junpin">
-                <option>全部状态</option>
-                <option>正常</option>
-                <option>预警</option>
-                <option>逾期</option>
-              </select>
-              <select class="px-3 py-2 rounded-md border border-[#E5E5E5] text-sm text-[#333333] focus:outline-none focus:border-junpin">
-                <option>全部部门</option>
-                <option>业务部门A</option>
-                <option>业务部门B</option>
-                <option>业务部门C</option>
-              </select>
-              <div class="flex-1"></div>
-              <button class="px-3 py-1 rounded-full text-sm bg-junpin text-white">全部</button>
-              <button class="px-3 py-1 rounded-full text-sm bg-[#F0F0F0] text-[#666666] hover:bg-[#E5E5E5]">进行中</button>
-              <button class="px-3 py-1 rounded-full text-sm bg-[#F0F0F0] text-[#666666] hover:bg-[#E5E5E5]">已逾期</button>
-              <button class="px-3 py-1 rounded-full text-sm bg-[#F0F0F0] text-[#666666] hover:bg-[#E5E5E5]">本月到期</button>
-            </div>
-          </div>
-          
-          <!-- Card View -->
-          <div id="view-card" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-            <div class="card-hover bg-white rounded-lg border border-[#E5E5E5] overflow-hidden shadow-sm cursor-pointer" onclick="showPage('detail')">
-              <div class="p-5">
-                <div class="flex items-start justify-between mb-4">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-[#F0F7F4] flex items-center justify-center">
-                      <i class="lucide-building text-junpin"></i>
-                    </div>
-                    <div>
-                      <h3 class="font-semibold text-[#333333]">包装车间智能化升级</h3>
-                      <p class="text-sm text-[#666666]">PJ2026001</p>
-                    </div>
-                  </div>
-                  <span class="text-xs font-medium px-2 py-1 rounded-full bg-[#E8F7F0] text-[#00B42A]">正常</span>
-                </div>
-                
-                <div class="flex items-center gap-4 text-sm text-[#666666] mb-4">
-                  <span class="flex items-center gap-1.5"><i class="lucide-user"></i> 张明远</span>
-                  <span class="flex items-center gap-1.5"><i class="lucide-building-2"></i> 业务部门A</span>
-                </div>
-                
-                <div class="mb-4">
-                  <div class="flex items-center justify-between text-sm mb-2">
-                    <span class="text-[#666666]">进度</span>
-                    <span class="font-medium text-[#333333]">82%</span>
-                  </div>
-                  <div class="w-full h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
-                    <div class="h-full bg-junpin rounded-full" style="width: 82%"></div>
-                  </div>
-                </div>
-                
-                <div class="text-sm mb-4">
-                  <span class="text-[#666666]">预算: </span>
-                  <span class="font-medium text-[#333333]">¥1,280万</span>
-                  <span class="text-[#999999] mx-1">/</span>
-                  <span class="font-medium text-[#333333]">¥1,050万</span>
-                </div>
-                
-                <div class="flex items-center justify-between pt-4 border-t border-[#E5E5E5]">
-                  <div class="flex items-center gap-2">
-                    <i class="lucide-check-circle text-[#00B42A]"></i>
-                    <span class="text-[#666666]">📅 剩余 15 天</span>
-                  </div>
-                  <button class="text-junpin hover:underline font-medium text-sm flex items-center gap-1">
-                    详情 <i class="lucide-arrow-right"></i>
-                  </button>
-                </div>
+              <div class="w-full h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
+                <div class="h-full bg-junpin rounded-full" style="width: 82%"></div>
               </div>
             </div>
-            
-            <div class="card-hover bg-white rounded-lg border border-[#E5E5E5] overflow-hidden shadow-sm cursor-pointer" onclick="showPage('detail')">
-              <div class="p-5">
-                <div class="flex items-start justify-between mb-4">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-[#F0F7F4] flex items-center justify-center">
-                      <i class="lucide-building text-junpin"></i>
-                    </div>
-                    <div>
-                      <h3 class="font-semibold text-[#333333]">质量管控AI平台</h3>
-                      <p class="text-sm text-[#666666]">PJ2026002</p>
-                    </div>
-                  </div>
-                  <span class="text-xs font-medium px-2 py-1 rounded-full bg-[#FFF7E8] text-[#FF7D00]">预警</span>
-                </div>
-                
-                <div class="flex items-center gap-4 text-sm text-[#666666] mb-4">
-                  <span class="flex items-center gap-1.5"><i class="lucide-user"></i> 李思源</span>
-                  <span class="flex items-center gap-1.5"><i class="lucide-building-2"></i> 业务部门B</span>
-                </div>
-                
-                <div class="mb-4">
-                  <div class="flex items-center justify-between text-sm mb-2">
-                    <span class="text-[#666666]">进度</span>
-                    <span class="font-medium text-[#333333]">45%</span>
-                  </div>
-                  <div class="w-full h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
-                    <div class="h-full bg-junpin rounded-full" style="width: 45%"></div>
-                  </div>
-                </div>
-                
-                <div class="text-sm mb-4">
-                  <span class="text-[#666666]">预算: </span>
-                  <span class="font-medium text-[#333333]">¥520万</span>
-                  <span class="text-[#999999] mx-1">/</span>
-                  <span class="font-medium text-[#333333]">¥480万</span>
-                </div>
-                
-                <div class="flex items-center justify-between pt-4 border-t border-[#E5E5E5]">
-                  <div class="flex items-center gap-2">
-                    <i class="lucide-alert-triangle text-[#FF7D00]"></i>
-                    <span class="text-[#F53F3F]">⚠️ 逾期 -2 天</span>
-                  </div>
-                  <button class="text-junpin hover:underline font-medium text-sm flex items-center gap-1">
-                    详情 <i class="lucide-arrow-right"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- List View -->
-          <div id="view-list" class="hidden bg-white rounded-lg border border-[#E5E5E5] shadow-sm overflow-hidden">
-            <table class="w-full">
-              <thead class="bg-[#F7F8FA]">
-                <tr>
-                  <th class="px-5 py-3 text-left text-sm font-semibold text-[#333333]">项目名称</th>
-                  <th class="px-5 py-3 text-left text-sm font-semibold text-[#333333]">负责人</th>
-                  <th class="px-5 py-3 text-left text-sm font-semibold text-[#333333]">部门</th>
-                  <th class="px-5 py-3 text-left text-sm font-semibold text-[#333333]">进度</th>
-                  <th class="px-5 py-3 text-left text-sm font-semibold text-[#333333]">预算</th>
-                  <th class="px-5 py-3 text-left text-sm font-semibold text-[#333333]">状态</th>
-                  <th class="px-5 py-3 text-left text-sm font-semibold text-[#333333]">剩余天数</th>
-                  <th class="px-5 py-3 text-right text-sm font-semibold text-[#333333]">操作</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-[#E5E5E5]">
-                <tr class="row-hover cursor-pointer" onclick="showPage('detail')">
-                  <td class="px-5 py-4">
-                    <div><p class="font-medium text-[#333333]">包装车间智能化升级</p><p class="text-sm text-[#666666]">PJ2026001</p></div>
-                  </td>
-                  <td class="px-5 py-4 text-[#333333]">张明远</td>
-                  <td class="px-5 py-4 text-[#666666]">业务部门A</td>
-                  <td class="px-5 py-4">
-                    <div class="flex items-center gap-2">
-                      <span class="font-medium text-[#333333]">82%</span>
-                      <div class="w-20 h-1.5 bg-[#E5E5E5] rounded-full overflow-hidden">
-                        <div class="h-full bg-junpin rounded-full" style="width: 82%"></div>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="px-5 py-4 text-[#333333]">¥1,280万</td>
-                  <td class="px-5 py-4">
-                    <span class="text-xs font-medium px-2 py-1 rounded-full bg-[#E8F7F0] text-[#00B42A]">正常</span>
-                  </td>
-                  <td class="px-5 py-4">
-                    <span class="text-[#666666]">15 天</span>
-                  </td>
-                  <td class="px-5 py-4 text-right">
-                    <button class="text-junpin hover:underline text-sm font-medium">详情</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
           </div>
         </div>
       </div>
@@ -419,71 +190,77 @@
               </button>
               <div><p class="text-[#666666] text-sm">项目总览 &gt; 包装车间智能化升级</p></div>
             </div>
-            
-            <div class="flex items-start gap-4">
-              <div class="w-14 h-14 rounded-lg bg-[#F0F7F4] flex items-center justify-center">
-                <i class="lucide-building text-junpin text-2xl"></i>
-              </div>
-              <div class="flex-1">
-                <h1 class="text-2xl font-bold text-[#333333]">包装车间智能化升级</h1>
-                <div class="flex items-center gap-4 mt-2 text-sm text-[#666666]">
-                  <span>PJ2026001</span>
-                  <span class="flex items-center gap-1.5"><i class="lucide-user"></i> 张明远</span>
-                  <span class="flex items-center gap-1.5"><i class="lucide-building-2"></i> 业务部门A</span>
-                  <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-[#E8F7F0] text-[#00B42A]">正常</span>
-                </div>
-              </div>
-              <button class="btn-junpin px-4 py-2 rounded-md flex items-center gap-2 font-medium">
-                <i class="lucide-edit"></i>
-                编辑
-              </button>
-            </div>
+            <h1 class="text-2xl font-bold text-[#333333]">包装车间智能化升级</h1>
           </div>
         </div>
         
         <div class="max-w-7xl mx-auto px-5 py-6">
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mb-8">
-            <div class="bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm">
-              <p class="text-[#666666] text-sm mb-1">总预算</p>
-              <p class="text-2xl font-bold text-[#333333]">¥1,280万</p>
-            </div>
-            <div class="bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm">
-              <p class="text-[#666666] text-sm mb-1">已发生成本</p>
-              <p class="text-2xl font-bold text-[#333333]">¥1,050万</p>
-            </div>
-            <div class="bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm">
-              <p class="text-[#666666] text-sm mb-1">整体进度</p>
-              <p class="text-2xl font-bold text-[#333333]">82%</p>
-            </div>
-            <div class="bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm">
-              <p class="text-[#666666] text-sm mb-1">项目成员</p>
-              <p class="text-2xl font-bold text-[#333333]">8人</p>
-            </div>
-          </div>
-          
           <div class="bg-white rounded-lg border border-[#E5E5E5] shadow-sm overflow-hidden">
             <div class="flex border-b border-[#E5E5E5]">
-              <button class="px-6 py-4 text-sm font-medium tab-active">概览</button>
-              <button class="px-6 py-4 text-sm font-medium text-[#666666] hover:text-[#333333]">立项</button>
-              <button class="px-6 py-4 text-sm font-medium text-[#666666] hover:text-[#333333]">采购</button>
-              <button class="px-6 py-4 text-sm font-medium text-[#666666] hover:text-[#333333]">合同</button>
-              <button class="px-6 py-4 text-sm font-medium text-[#666666] hover:text-[#333333]">进度</button>
-              <button class="px-6 py-4 text-sm font-medium text-[#666666] hover:text-[#333333]">成本</button>
-              <button class="px-6 py-4 text-sm font-medium text-[#666666] hover:text-[#333333]">验收</button>
-              <button class="px-6 py-4 text-sm font-medium text-[#666666] hover:text-[#333333]">档案</button>
-              <button class="px-6 py-4 text-sm font-medium text-[#666666] hover:text-[#333333]">预警</button>
+              <button class="detail-tab tab-active px-6 py-4 text-sm font-medium" onclick="setDetailTab('overview')">概览</button>
+              <button class="detail-tab px-6 py-4 text-sm font-medium text-[#666666] hover:text-[#333333]" onclick="setDetailTab('initiation')">立项</button>
+              <button class="detail-tab px-6 py-4 text-sm font-medium text-[#666666] hover:text-[#333333]" onclick="setDetailTab('procurement')">采购</button>
+              <button class="detail-tab px-6 py-4 text-sm font-medium text-[#666666] hover:text-[#333333]" onclick="setDetailTab('contracts')">合同</button>
+              <button class="detail-tab px-6 py-4 text-sm font-medium text-[#666666] hover:text-[#333333]" onclick="setDetailTab('progress')">进度</button>
+              <button class="detail-tab px-6 py-4 text-sm font-medium text-[#666666] hover:text-[#333333]" onclick="setDetailTab('costs')">成本</button>
+              <button class="detail-tab px-6 py-4 text-sm font-medium text-[#666666] hover:text-[#333333]" onclick="setDetailTab('acceptance')">验收</button>
+              <button class="detail-tab px-6 py-4 text-sm font-medium text-[#666666] hover:text-[#333333]" onclick="setDetailTab('archives')">档案</button>
+              <button class="detail-tab px-6 py-4 text-sm font-medium text-[#666666] hover:text-[#333333]" onclick="setDetailTab('warnings')">预警</button>
             </div>
             <div class="p-6">
-              <div class="text-center py-12 text-[#666666]">
+              <div id="detail-overview" class="detail-content active text-center py-12 text-[#666666]">
                 <i class="lucide-info text-4xl text-[#999999] mb-4"></i>
                 <p class="text-lg">项目概览内容区域</p>
                 <p class="text-sm mt-2">左侧：项目信息 + 最新动态</p>
                 <p class="text-sm">右侧：快捷操作 + 待办事项</p>
               </div>
+              <div id="detail-initiation" class="detail-content text-center py-12 text-[#666666]">
+                <i class="lucide-file-text text-4xl text-[#999999] mb-4"></i>
+                <p class="text-lg">立项管理内容区域</p>
+              </div>
+              <div id="detail-procurement" class="detail-content text-center py-12 text-[#666666]">
+                <i class="lucide-package text-4xl text-[#999999] mb-4"></i>
+                <p class="text-lg">采购管理内容区域</p>
+              </div>
+              <div id="detail-contracts" class="detail-content text-center py-12 text-[#666666]">
+                <i class="lucide-file-check text-4xl text-[#999999] mb-4"></i>
+                <p class="text-lg">合同管理内容区域</p>
+              </div>
+              <div id="detail-progress" class="detail-content text-center py-12 text-[#666666]">
+                <i class="lucide-gantt-chart text-4xl text-[#999999] mb-4"></i>
+                <p class="text-lg">进度管理内容区域</p>
+              </div>
+              <div id="detail-costs" class="detail-content text-center py-12 text-[#666666]">
+                <i class="lucide-wallet text-4xl text-[#999999] mb-4"></i>
+                <p class="text-lg">成本管理内容区域</p>
+              </div>
+              <div id="detail-acceptance" class="detail-content text-center py-12 text-[#666666]">
+                <i class="lucide-check-square text-4xl text-[#999999] mb-4"></i>
+                <p class="text-lg">验收管理内容区域</p>
+              </div>
+              <div id="detail-archives" class="detail-content text-center py-12 text-[#666666]">
+                <i class="lucide-folder-open text-4xl text-[#999999] mb-4"></i>
+                <p class="text-lg">档案管理内容区域</p>
+              </div>
+              <div id="detail-warnings" class="detail-content text-center py-12 text-[#666666]">
+                <i class="lucide-alert-triangle text-4xl text-[#999999] mb-4"></i>
+                <p class="text-lg">预警消息内容区域</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      <!-- Placeholder Pages -->
+      <div id="page-procurement" class="page"><div class="max-w-7xl mx-auto px-5 py-8"><h1 class="text-2xl font-bold text-[#333333] mb-8">采购管理</h1><p class="text-[#666666]">采购计划、采购执行、供应商管理等功能</p></div></div>
+      <div id="page-contracts" class="page"><div class="max-w-7xl mx-auto px-5 py-8"><h1 class="text-2xl font-bold text-[#333333] mb-8">合同管理</h1><p class="text-[#666666]">合同起草、审批、履约管理等功能</p></div></div>
+      <div id="page-dashboard" class="page"><div class="max-w-7xl mx-auto px-5 py-8"><h1 class="text-2xl font-bold text-[#333333] mb-8">领导驾驶舱</h1><p class="text-[#666666]">全局数据视图、关键指标监控等功能</p></div></div>
+      <div id="page-reports" class="page"><div class="max-w-7xl mx-auto px-5 py-8"><h1 class="text-2xl font-bold text-[#333333] mb-8">统计报表</h1><p class="text-[#666666]">项目统计、进度报表、成本分析等功能</p></div></div>
+      <div id="page-organization" class="page"><div class="max-w-7xl mx-auto px-5 py-8"><h1 class="text-2xl font-bold text-[#333333] mb-8">组织架构</h1><p class="text-[#666666]">组织架构管理、部门设置等功能</p></div></div>
+      <div id="page-roles" class="page"><div class="max-w-7xl mx-auto px-5 py-8"><h1 class="text-2xl font-bold text-[#333333] mb-8">角色权限</h1><p class="text-[#666666]">角色配置、权限分配等功能</p></div></div>
+      <div id="page-workflow" class="page"><div class="max-w-7xl mx-auto px-5 py-8"><h1 class="text-2xl font-bold text-[#333333] mb-8">流程配置</h1><p class="text-[#666666]">审批流程配置、业务规则设置等功能</p></div></div>
+      <div id="page-warnings" class="page"><div class="max-w-7xl mx-auto px-5 py-8"><h1 class="text-2xl font-bold text-[#333333] mb-8">预警规则</h1><p class="text-[#666666]">预警规则配置、预警阈值设置等功能</p></div></div>
+      <div id="page-logs" class="page"><div class="max-w-7xl mx-auto px-5 py-8"><h1 class="text-2xl font-bold text-[#333333] mb-8">系统日志</h1><p class="text-[#666666]">操作日志、审计追踪等功能</p></div></div>
     </div>
 
     <script>
@@ -492,21 +269,13 @@
         document.getElementById('page-' + page).classList.add('active');
       }
 
-      function setViewMode(mode) {
-        document.getElementById('view-btn-list').classList.remove('active');
-        document.getElementById('view-btn-card').classList.remove('active');
-        document.getElementById('view-btn-' + mode).classList.add('active');
+      function setDetailTab(tab) {
+        document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('tab-active'));
+        document.querySelectorAll('.detail-content').forEach(c => c.classList.remove('active'));
         
-        if (mode === 'card') {
-          document.getElementById('view-card').classList.remove('hidden');
-          document.getElementById('view-list').classList.add('hidden');
-        } else {
-          document.getElementById('view-card').classList.add('hidden');
-          document.getElementById('view-list').classList.remove('hidden');
-        }
+        event.target.classList.add('tab-active');
+        document.getElementById('detail-' + tab).classList.add('active');
       }
     </script>
   </body>
 </html>
-</p>
-                <p class="text-sm mt-2

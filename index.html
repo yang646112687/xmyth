@@ -3,470 +3,477 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>项目一体化平台</title>
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <title>项目一体化平台 - 君品绿主题原型设计</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200;12..96,300;12..96,400;12..96,500;12..96,600;12..96,700&family=Crimson+Pro:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-icons@0.263.1/font/lucide.css">
     <style>
       * { box-sizing: border-box; }
-      body { margin: 0; padding: 0; background: #0A0F1D; color: #FEFAF5; font-family: 'Crimson Pro', serif; }
-      #root { min-height: 100vh; }
-      .font-display { font-family: 'Bricolage Grotesque', sans-serif; }
-      .font-body { font-family: 'Crimson Pro', serif; }
-      .gradient-border { position: relative; }
-      .gradient-border::before {
-        content: ''; position: absolute; inset: 0; padding: 1px;
-        background: linear-gradient(135deg, rgba(245,158,11,0.3), rgba(245,158,11,0.05));
-        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-        mask-composite: exclude; pointer-events: none; border-radius: inherit;
+      body { margin: 0; padding: 0; background: #F7F8FA; font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+      :root {
+        --junpin-green: #0A5C36;
+        --junpin-green-dark: #084C2C;
+        --junpin-green-light: #F0F7F4;
+        --text-primary: #333333;
+        --text-secondary: #666666;
+        --text-tertiary: #999999;
+        --border-color: #E5E5E5;
+        --success: #00B42A;
+        --warning: #FF7D00;
+        --danger: #F53F3F;
       }
-      @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-      .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; opacity: 0; }
-      .stagger-1 { animation-delay: 0.1s; } .stagger-2 { animation-delay: 0.2s; } .stagger-3 { animation-delay: 0.3s; }
-      .stagger-4 { animation-delay: 0.4s; } .stagger-5 { animation-delay: 0.5s; } .stagger-6 { animation-delay: 0.6s; }
-      .stagger-7 { animation-delay: 0.7s; } .stagger-8 { animation-delay: 0.8s; }
+      .text-junpin { color: var(--junpin-green); }
+      .bg-junpin { background-color: var(--junpin-green); }
+      .bg-junpin-light { background-color: var(--junpin-green-light); }
+      .border-junpin { border-color: var(--junpin-green); }
+      .btn-junpin { background-color: var(--junpin-green); color: white; transition: all 0.2s ease; }
+      .btn-junpin:hover { background-color: var(--junpin-green-dark); transform: scale(0.98); }
+      .tab-active { color: var(--junpin-green); border-bottom: 2px solid var(--junpin-green); }
       .card-hover { transition: all 0.3s ease; }
-      .card-hover:hover { transform: translateY(-4px); box-shadow: 0 8px 40px rgba(0,0,0,0.25); }
-      .bg-texture {
-        background-image: radial-gradient(circle at 20% 20%, rgba(245,158,11,0.05) 0%, transparent 50%),
-                          radial-gradient(circle at 80% 80%, rgba(59,130,246,0.03) 0%, transparent 50%);
-      }
+      .card-hover:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12); border-color: var(--junpin-green); }
+      .row-hover:hover { background-color: var(--junpin-green-light); }
+      .view-switch-btn.active { color: var(--junpin-green); border-bottom: 2px solid var(--junpin-green); }
+      .page-transition { animation: fadeIn 0.3s ease; }
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
   </head>
-  <body class="bg-texture">
-    <div id="root"></div>
-    <script type="text/babel">
-      const { useState } = React;
-      
-      // ==================== MODULES ====================
-      const modules = [
-        { id: 'dashboard', name: '工作台', icon: 'layout-dashboard' },
-        { id: 'projects', name: '项目总览', icon: 'building-2' },
-        { id: 'initiation', name: '立项管理', icon: 'file-text' },
-        { id: 'procurement', name: '采购管理', icon: 'package' },
-        { id: 'contracts', name: '合同管理', icon: 'file-check' },
-        { id: 'progress', name: '进度管理', icon: 'gantt-chart' },
-        { id: 'costs', name: '成本管理', icon: 'wallet' },
-        { id: 'resources', name: '资源管理', icon: 'users' },
-        { id: 'acceptance', name: '验收管理', icon: 'check-square' },
-        { id: 'archives', name: '档案管理', icon: 'folder-open' },
-        { id: 'achievements', name: '成果管理', icon: 'award' },
-        { id: 'investment', name: '投资管理', icon: 'trending-up' },
-        { id: 'warnings', name: '智能预警', icon: 'alert-triangle' },
-        { id: 'settings', name: '基础能力', icon: 'settings' },
-      ];
-      
-      // ==================== MOCK DATA ====================
+  <body>
+    <div id="app"></div>
+    
+    <script>
       const mockProjects = [
-        { id: 'PJ2026001', name: '包装车间智能化升级', type: 'investment', manager: '张明远', department: '业务部门A', progress: 82, budget: 12800000, budgetUsed: 10500000, status: 'normal', health: { score: 88, label: '健康' } },
-        { id: 'PJ2026002', name: '质量管控AI平台', type: 'research', manager: '李思源', department: '业务部门B', progress: 45, budget: 5200000, budgetUsed: 4800000, status: 'warning', health: { score: 62, label: '需关注' } },
-        { id: 'PJ2026003', name: '营销数字化中台', type: 'it', manager: '王静怡', department: '业务部门C', progress: 68, budget: 8500000, budgetUsed: 5800000, status: 'normal', health: { score: 92, label: '优秀' } },
+        { id: 'PJ2026001', name: '包装车间智能化升级', type: 'equipment', manager: '张明远', department: '业务部门A', progress: 82, budget: 12800000, budgetUsed: 10500000, status: 'normal', health: { score: 88, label: '正常' }, daysLeft: 15 },
+        { id: 'PJ2026002', name: '质量管控AI平台', type: 'research', manager: '李思源', department: '业务部门B', progress: 45, budget: 5200000, budgetUsed: 4800000, status: 'warning', health: { score: 62, label: '预警' }, daysLeft: -2 },
+        { id: 'PJ2026003', name: '营销数字化中台', type: 'it', manager: '王静怡', department: '业务部门C', progress: 68, budget: 8500000, budgetUsed: 5800000, status: 'normal', health: { score: 92, label: '正常' }, daysLeft: 30 },
+        { id: 'PJ2026004', name: '基酒储存设施扩建', type: 'investment', manager: '陈建国', department: '业务部门D', progress: 28, budget: 35000000, budgetUsed: 12000000, status: 'danger', health: { score: 48, label: '逾期' }, daysLeft: -8 },
       ];
       
-      // ==================== COMPONENTS ====================
-      const StatCard = ({ title, value, icon, delay }) => (
-        <div className={`animate-fade-in-up stagger-${delay} card-hover gradient-border rounded-2xl p-6 bg-[#0F172A]/60`}>
-          <div className="flex items-start justify-between mb-4">
-            <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center">
-              <i className={`lucide-${icon} text-amber-500 text-xl`}></i>
-            </div>
-          </div>
-          <p className="text-[#64748B] text-sm font-display mb-1">{title}</p>
-          <p className="text-3xl font-display font-semibold text-[#FEFAF5]">{value}</p>
-        </div>
-      );
-      
-      const TabButton = ({ label, active, onClick }) => (
-        <button
-          onClick={onClick}
-          className={`px-4 py-2 rounded-lg text-sm font-display transition-all ${
-            active ? 'bg-amber-500 text-[#0A0F1D] font-medium' : 'bg-[#1E293B]/50 text-[#64748B] hover:text-[#FEFAF5]'
-          }`}
-        >
-          {label}
-        </button>
-      );
-      
-      const FunctionPlaceholder = ({ title, features }) => (
-        <div className="p-8">
-          <div className="mb-8 animate-fade-in-up">
-            <p className="text-[#64748B] text-sm font-display mb-2">{title}</p>
-            <h1 className="text-4xl font-display font-bold text-[#FEFAF5]">{title}</h1>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map((feature, idx) => (
-              <div key={idx} className={`animate-fade-in-up stagger-${idx + 1} card-hover gradient-border rounded-2xl p-6 bg-[#0F172A]/60`}>
-                <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center mb-4">
-                  <i className={`lucide-${feature.icon} text-amber-500`}></i>
-                </div>
-                <h3 className="font-display font-semibold text-[#FEFAF5] mb-2">{feature.name}</h3>
-                <p className="text-[#64748B] text-sm font-body">{feature.description}</p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {feature.tags?.map((tag, i) => (
-                    <span key={i} className="text-xs px-2 py-1 rounded bg-amber-500/10 text-amber-500">{tag}</span>
-                  ))}
-                </div>
+      const App = () => {
+        const [currentPage, setCurrentPage] = React.useState('home');
+        const [viewMode, setViewMode] = React.useState('card');
+        const [selectedProject, setSelectedProject] = React.useState(null);
+        
+        const renderHomePage = () => (
+          <div className="page-transition">
+            <div className="max-w-7xl mx-auto px-5 py-8">
+              <div className="mb-8">
+                <h1 className="text-2xl font-bold text-[#333333] mb-2">君品绿·项目一体化平台</h1>
+                <p className="text-[#666666]"> · 项目管理数字化</p>
               </div>
-            ))}
-          </div>
-        </div>
-      );
-      
-      // ==================== PAGES ====================
-      const Dashboard = () => (
-        <div className="p-8">
-          <div className="mb-8 animate-fade-in-up">
-            <p className="text-[#64748B] text-sm font-display mb-2">工作台</p>
-            <h1 className="text-4xl font-display font-bold text-[#FEFAF5]">早上好，管理员</h1>
-            <p className="text-[#64748B] text-lg font-body mt-2">今天是 2026年3月23日，星期一</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <StatCard title="进行中项目" value="12" icon="building-2" delay="1" />
-            <StatCard title="待办审批" value="18" icon="inbox" delay="2" />
-            <StatCard title="本月验收" value="6" icon="check-square" delay="3" />
-            <StatCard title="风险预警" value="3" icon="alert-triangle" delay="4" />
-          </div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-              <div className="animate-fade-in-up stagger-5 mb-6">
-                <h2 className="text-xl font-display font-semibold text-[#FEFAF5]">待办事项</h2>
-              </div>
-              <div className="space-y-4">
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
                 {[
-                  { title: '包装车间升级 - 设备选型审批', type: '审批', due: '今日 18:00' },
-                  { title: '质量管控平台 - 里程碑确认', type: '确认', due: '明日 12:00' },
-                  { title: '营销中台 - 预算调整申请', type: '申请', due: '03-26 09:00' },
-                ].map((todo, idx) => (
-                  <div key={idx} className={`animate-fade-in-up stagger-${idx + 6} card-hover border-l-2 border-amber-500 rounded-xl p-4 bg-[#0F172A]/40`}>
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="text-xs font-medium px-2 py-0.5 rounded text-amber-500 bg-amber-500/10">{todo.type}</span>
-                          <p className="font-display font-medium text-[#FEFAF5]">{todo.title}</p>
-                        </div>
-                        <p className="text-[#64748B] text-sm font-body">截止: {todo.due}</p>
-                      </div>
-                      <button className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-[#0A0F1D] text-sm font-display font-medium rounded-lg transition-colors">处理</button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            <div>
-              <div className="animate-fade-in-up stagger-7 mb-6">
-                <h2 className="text-xl font-display font-semibold text-[#FEFAF5]">项目健康度</h2>
-              </div>
-              <div className="space-y-4">
-                {mockProjects.map((project, idx) => (
-                  <div key={project.id} className={`animate-fade-in-up stagger-${idx + 8} card-hover rounded-xl p-4 bg-[#0F172A]/40`}>
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-display font-medium text-[#FEFAF5] text-sm">{project.name}</h3>
-                      <span className="text-xs font-display font-medium text-amber-500">{project.progress}%</span>
-                    </div>
-                    <div className="h-1.5 bg-[#1E293B] rounded-full overflow-hidden">
-                      <div className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-400" style={{ width: `${project.progress}%` }}></div>
+                  { title: '项目总数', value: '128', trend: '+12', trendUp: true },
+                  { title: '进行中', value: '45', trend: '+5', trendUp: true },
+                  { title: '已逾期', value: '8', trend: '+3', trendUp: false, isWarning: true },
+                  { title: '风险项目', value: '12', trend: '+2', trendUp: false, isWarning: true },
+                ].map((stat, idx) => (
+                  <div key={idx} className="card-hover bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm">
+                    <p className="text-[#666666] text-sm mb-2">{stat.title}</p>
+                    <div className="flex items-baseline justify-between">
+                      <p className="text-3xl font-bold text-[#333333]">{stat.value}</p>
+                      <span className={`text-sm font-medium flex items-center gap-1 ${stat.isWarning ? (stat.trendUp ? 'text-[#F53F3F]' : 'text-[#00B42A]') : (stat.trendUp ? 'text-junpin' : 'text-[#F53F3F]')}`}>
+                        <i className={`lucide-${stat.trendUp ? 'trending-up' : 'trending-down'}`}></i>
+                        {stat.trend}
+                      </span>
                     </div>
                   </div>
                 ))}
               </div>
               
-              <div className="animate-fade-in-up stagger-9 mt-8">
-                <div className="gradient-border rounded-xl p-6 bg-gradient-to-br from-amber-500/10 to-amber-500/5">
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center">
-                      <i className="lucide-sparkles text-amber-500"></i>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2">
+                  <div className="bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm">
+                    <div className="flex items-center justify-between mb-5">
+                      <h2 className="text-lg font-semibold text-[#333333]">项目健康度 TOP 5</h2>
+                      <button onClick={() => setCurrentPage('projects')} className="text-junpin hover:underline text-sm font-medium">
+                        查看全部 <i className="lucide-arrow-right ml-1"></i>
+                      </button>
                     </div>
-                    <div>
-                      <h3 className="font-display font-semibold text-[#FEFAF5] mb-1">AI 智能助手</h3>
-                      <p className="text-sm text-[#64748B] font-body">检测到基酒储存设施项目进度滞后，建议关注。</p>
+                    <div className="space-y-4">
+                      {mockProjects.slice(0, 5).map((project, idx) => (
+                        <div key={project.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-[#F0F7F4] cursor-pointer transition-colors" onClick={() => { setSelectedProject(project); setCurrentPage('detail'); }}>
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg bg-[#F0F7F4] flex items-center justify-center">
+                              <i className="lucide-building text-junpin"></i>
+                            </div>
+                            <div>
+                              <p className="font-medium text-[#333333]">{project.name}</p>
+                              <p className="text-sm text-[#666666]">{project.id} · {project.department}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <div className="text-right">
+                              <p className="text-sm font-medium text-[#333333]">{project.progress}%</p>
+                              <div className="w-24 h-1.5 bg-[#E5E5E5] rounded-full overflow-hidden mt-1">
+                                <div className="h-full bg-junpin rounded-full" style={{ width: `${project.progress}%` }}></div>
+                              </div>
+                            </div>
+                            <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+                              project.status === 'normal' ? 'bg-[#E8F7F0] text-[#00B42A]' :
+                              project.status === 'warning' ? 'bg-[#FFF7E8] text-[#FF7D00]' :
+                              'bg-[#FDECEC] text-[#F53F3F]'
+                            }`}>{project.health.label}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm">
+                    <div className="flex items-center justify-between mb-5">
+                      <h2 className="text-lg font-semibold text-[#333333]">预警消息</h2>
+                    </div>
+                    <div className="space-y-3">
+                      {[
+                        { title: '基酒储存设施 - 进度逾期', level: 'danger', time: '8天前' },
+                        { title: '质量管控平台 - 预算超支', level: 'warning', time: '2天前' },
+                        { title: '包装车间升级 - 合同即将到期', level: 'warning', time: '3天后' },
+                      ].map((warning, idx) => (
+                        <div key={idx} className={`p-3 rounded-lg border-l-2 ${
+                          warning.level === 'danger' ? 'bg-[#FDECEC] border-l-[#F53F3F]' : 'bg-[#FFF7E8] border-l-[#FF7D00]'
+                        }`}>
+                          <p className={`font-medium text-sm ${warning.level === 'danger' ? 'text-[#F53F3F]' : 'text-[#FF7D00]'}`}>{warning.title}</p>
+                          <p className="text-xs text-[#666666] mt-1">{warning.time}</p>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      );
-      
-      const ProjectList = () => (
-        <div className="p-8">
-          <div className="mb-8 animate-fade-in-up">
-            <p className="text-[#64748B] text-sm font-display mb-2">项目管理</p>
-            <h1 className="text-4xl font-display font-bold text-[#FEFAF5]">项目总览</h1>
-          </div>
-          
-          <div className="animate-fade-in-up stagger-1 mb-8 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              {['全部', '投资类', '科研类', '信息化类'].map((f, idx) => (
-                <TabButton key={f} label={f} active={idx === 0} onClick={() => {}} />
-              ))}
+        );
+        
+        const renderProjectsPage = () => (
+          <div className="page-transition">
+            <div className="max-w-7xl mx-auto px-5 py-8">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h1 className="text-2xl font-bold text-[#333333] mb-2">项目总览</h1>
+                  <p className="text-[#666666]">共 {mockProjects.length} 个项目</p>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="flex bg-white rounded-lg border border-[#E5E5E5] p-1">
+                    <button
+                      onClick={() => setViewMode('list')}
+                      className={`view-switch-btn px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-all ${viewMode === 'list' ? 'active' : 'text-[#666666]'}`}
+                    >
+                      <i className="lucide-list"></i>
+                      列表
+                    </button>
+                    <button
+                      onClick={() => setViewMode('card')}
+                      className={`view-switch-btn px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-all ${viewMode === 'card' ? 'active' : 'text-[#666666]'}`}
+                    >
+                      <i className="lucide-grid-3x3"></i>
+                      卡片
+                    </button>
+                  </div>
+                  <button className="btn-junpin px-4 py-2 rounded-md flex items-center gap-2 font-medium">
+                    <i className="lucide-plus"></i>
+                    新建项目
+                  </button>
+                </div>
+              </div>
+              
+              <div className="bg-white rounded-lg border border-[#E5E5E5] p-4 shadow-sm mb-6">
+                <div className="flex flex-wrap items-center gap-3">
+                  <select className="px-3 py-2 rounded-md border border-[#E5E5E5] text-sm text-[#333333] focus:outline-none focus:border-junpin">
+                    <option>全部类型</option><option>投资类</option><option>设备类</option><option>科研类</option><option>信息化类</option>
+                  </select>
+                  <select className="px-3 py-2 rounded-md border border-[#E5E5E5] text-sm text-[#333333] focus:outline-none focus:border-junpin">
+                    <option>全部状态</option><option>正常</option><option>预警</option><option>逾期</option>
+                  </select>
+                  <select className="px-3 py-2 rounded-md border border-[#E5E5E5] text-sm text-[#333333] focus:outline-none focus:border-junpin">
+                    <option>全部部门</option><option>业务部门A</option><option>业务部门B</option><option>业务部门C</option>
+                  </select>
+                  <div className="flex-1"></div>
+                  {['全部', '进行中', '已逾期', '本月到期'].map((tag, idx) => (
+                    <button key={idx} className={`px-3 py-1 rounded-full text-sm ${idx === 0 ? 'bg-junpin text-white' : 'bg-[#F0F0F0] text-[#666666] hover:bg-[#E5E5E5]'}`}>
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              {viewMode === 'card' ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                  {mockProjects.map((project, idx) => (
+                    <div key={project.id} className="card-hover bg-white rounded-lg border border-[#E5E5E5] overflow-hidden shadow-sm cursor-pointer" onClick={() => { setSelectedProject(project); setCurrentPage('detail'); }}>
+                      <div className="p-5">
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg bg-[#F0F7F4] flex items-center justify-center">
+                              <i className="lucide-building text-junpin"></i>
+                            </div>
+                            <div>
+                              <h3 className="font-semibold text-[#333333]">{project.name}</h3>
+                              <p className="text-sm text-[#666666]">{project.id}</p>
+                            </div>
+                          </div>
+                          <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+                            project.status === 'normal' ? 'bg-[#E8F7F0] text-[#00B42A]' :
+                            project.status === 'warning' ? 'bg-[#FFF7E8] text-[#FF7D00]' :
+                            'bg-[#FDECEC] text-[#F53F3F]'
+                          }`}>{project.health.label}</span>
+                        </div>
+                        
+                        <div className="flex items-center gap-4 text-sm text-[#666666] mb-4">
+                          <span className="flex items-center gap-1.5"><i className="lucide-user"></i> {project.manager}</span>
+                          <span className="flex items-center gap-1.5"><i className="lucide-building-2"></i> {project.department}</span>
+                        </div>
+                        
+                        <div className="mb-4">
+                          <div className="flex items-center justify-between text-sm mb-2">
+                            <span className="text-[#666666]">进度</span>
+                            <span className="font-medium text-[#333333]">{project.progress}%</span>
+                          </div>
+                          <div className="w-full h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
+                            <div className="h-full bg-junpin rounded-full" style={{ width: `${project.progress}%` }}></div>
+                          </div>
+                        </div>
+                        
+                        <div className="text-sm mb-4">
+                          <span className="text-[#666666]">预算: </span>
+                          <span className="font-medium text-[#333333]">¥{(project.budget / 10000).toFixed(0)}万</span>
+                          <span className="text-[#999999] mx-1">/</span>
+                          <span className={`font-medium ${(project.budgetUsed / project.budget) > 1 ? 'text-[#F53F3F]' : 'text-[#333333]'}`}>
+                            ¥{(project.budgetUsed / 10000).toFixed(0)}万
+                          </span>
+                        </div>
+                        
+                        <div className="flex items-center justify-between pt-4 border-t border-[#E5E5E5]">
+                          <div className="flex items-center gap-2">
+                            {project.status === 'normal' ? <i className="lucide-check-circle text-[#00B42A]"></i> : 
+                             project.status === 'warning' ? <i className="lucide-alert-triangle text-[#FF7D00]"></i> : 
+                             <i className="lucide-alert-circle text-[#F53F3F]"></i>}
+                            <span className={project.daysLeft >= 0 ? 'text-[#666666]' : 'text-[#F53F3F]'}>
+                              {project.daysLeft >= 0 ? `📅 剩余 ${project.daysLeft} 天` : `⚠️ 逾期 ${-project.daysLeft} 天`}
+                            </span>
+                          </div>
+                          <button className="text-junpin hover:underline font-medium text-sm flex items-center gap-1">
+                            详情 <i className="lucide-arrow-right"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-white rounded-lg border border-[#E5E5E5] shadow-sm overflow-hidden">
+                  <table className="w-full">
+                    <thead className="bg-[#F7F8FA]">
+                      <tr>
+                        <th className="px-5 py-3 text-left text-sm font-semibold text-[#333333]">项目名称</th>
+                        <th className="px-5 py-3 text-left text-sm font-semibold text-[#333333]">负责人</th>
+                        <th className="px-5 py-3 text-left text-sm font-semibold text-[#333333]">部门</th>
+                        <th className="px-5 py-3 text-left text-sm font-semibold text-[#333333]">进度</th>
+                        <th className="px-5 py-3 text-left text-sm font-semibold text-[#333333]">预算</th>
+                        <th className="px-5 py-3 text-left text-sm font-semibold text-[#333333]">状态</th>
+                        <th className="px-5 py-3 text-left text-sm font-semibold text-[#333333]">剩余天数</th>
+                        <th className="px-5 py-3 text-right text-sm font-semibold text-[#333333]">操作</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#E5E5E5]">
+                      {mockProjects.map((project, idx) => (
+                        <tr key={project.id} className="row-hover cursor-pointer" onClick={() => { setSelectedProject(project); setCurrentPage('detail'); }}>
+                          <td className="px-5 py-4">
+                            <div><p className="font-medium text-[#333333]">{project.name}</p><p className="text-sm text-[#666666]">{project.id}</p></div>
+                          </td>
+                          <td className="px-5 py-4 text-[#333333]">{project.manager}</td>
+                          <td className="px-5 py-4 text-[#666666]">{project.department}</td>
+                          <td className="px-5 py-4">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium text-[#333333]">{project.progress}%</span>
+                              <div className="w-20 h-1.5 bg-[#E5E5E5] rounded-full overflow-hidden">
+                                <div className="h-full bg-junpin rounded-full" style={{ width: `${project.progress}%` }}></div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-5 py-4 text-[#333333]">¥{(project.budget / 10000).toFixed(0)}万</td>
+                          <td className="px-5 py-4">
+                            <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+                              project.status === 'normal' ? 'bg-[#E8F7F0] text-[#00B42A]' :
+                              project.status === 'warning' ? 'bg-[#FFF7E8] text-[#FF7D00]' :
+                              'bg-[#FDECEC] text-[#F53F3F]'
+                            }`}>{project.health.label}</span>
+                          </td>
+                          <td className="px-5 py-4">
+                            <span className={project.daysLeft >= 0 ? 'text-[#666666]' : 'text-[#F53F3F]'}>
+                              {project.daysLeft >= 0 ? `${project.daysLeft} 天` : `逾期 ${-project.daysLeft} 天`}
+                            </span>
+                          </td>
+                          <td className="px-5 py-4 text-right">
+                            <button className="text-junpin hover:underline text-sm font-medium">详情</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
+        );
+        
+        const renderDetailPage = () => {
+          if (!selectedProject) return null;
+          const [activeTab, setActiveTab] = React.useState('overview');
           
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {mockProjects.map((project, idx) => (
-              <div key={project.id} className={`animate-fade-in-up stagger-${idx + 1} card-hover gradient-border rounded-2xl overflow-hidden bg-[#0F172A]/60`}>
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-[#1E293B] flex items-center justify-center">
-                        <i className="lucide-building text-[#64748B]"></i>
+          return (
+            <div className="page-transition">
+              <div className="bg-white border-b border-[#E5E5E5]">
+                <div className="max-w-7xl mx-auto px-5 py-6">
+                  <div className="flex items-center gap-4 mb-4">
+                    <button onClick={() => setCurrentPage('projects')} className="p-2 rounded-lg hover:bg-[#F0F7F4] transition-colors">
+                      <i className="lucide-arrow-left text-[#666666]"></i>
+                    </button>
+                    <div><p className="text-[#666666] text-sm">项目总览 &gt; {selectedProject.name}</p></div>
+                  </div>
+                  
+                  <div className="flex items-start gap-4">
+                    <div className="w-14 h-14 rounded-lg bg-[#F0F7F4] flex items-center justify-center">
+                      <i className="lucide-building text-junpin text-2xl"></i>
+                    </div>
+                    <div className="flex-1">
+                      <h1 className="text-2xl font-bold text-[#333333]">{selectedProject.name}</h1>
+                      <div className="flex items-center gap-4 mt-2 text-sm text-[#666666]">
+                        <span>{selectedProject.id}</span>
+                        <span className="flex items-center gap-1.5"><i className="lucide-user"></i> {selectedProject.manager}</span>
+                        <span className="flex items-center gap-1.5"><i className="lucide-building-2"></i> {selectedProject.department}</span>
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                          selectedProject.status === 'normal' ? 'bg-[#E8F7F0] text-[#00B42A]' :
+                          selectedProject.status === 'warning' ? 'bg-[#FFF7E8] text-[#FF7D00]' :
+                          'bg-[#FDECEC] text-[#F53F3F]'
+                        }`}>{selectedProject.health.label}</span>
                       </div>
-                      <div>
-                        <p className="text-xs text-[#64748B] font-display">{project.id}</p>
-                        <h3 className="font-display font-semibold text-[#FEFAF5]">{project.name}</h3>
-                      </div>
                     </div>
-                    <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                      project.health.label === '优秀' ? 'bg-emerald-500/10 text-emerald-400' :
-                      project.health.label === '健康' ? 'bg-blue-500/10 text-blue-400' :
-                      'bg-amber-500/10 text-amber-500'
-                    }`}>{project.health.label}</span>
-                  </div>
-                  
-                  <div className="flex items-center gap-4 text-sm text-[#64748B] mb-4 font-body">
-                    <span className="flex items-center gap-1.5"><i className="lucide-user"></i> {project.manager}</span>
-                    <span className="flex items-center gap-1.5"><i className="lucide-building"></i> {project.department}</span>
-                  </div>
-                  
-                  <div className="mb-4">
-                    <div className="flex items-center justify-between text-sm mb-2">
-                      <span className="text-[#64748B]">进度</span>
-                      <span className="font-display font-medium text-[#FEFAF5]">{project.progress}%</span>
-                    </div>
-                    <div className="h-2 bg-[#1E293B] rounded-full overflow-hidden">
-                      <div className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-400" style={{ width: `${project.progress}%` }}></div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between pt-4 border-t border-[#1E293B]">
-                    <div className="text-sm">
-                      <span className="text-[#64748B]">预算: </span>
-                      <span className="font-display font-medium text-[#FEFAF5]">¥{(project.budget / 10000).toFixed(0)}万</span>
-                    </div>
-                    <button className="text-amber-500 hover:text-amber-400 font-display font-medium text-sm flex items-center gap-1 transition-colors">
-                      详情 <i className="lucide-arrow-right"></i>
+                    <button className="btn-junpin px-4 py-2 rounded-md flex items-center gap-2 font-medium">
+                      <i className="lucide-edit"></i>
+                      编辑
                     </button>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      );
-      
-      const InitiationManagement = () => (
-        <FunctionPlaceholder title="立项管理" features={[
-          { name: '项目立项申请', icon: 'file-plus', description: '多类型标准化申请表单，支持附件上传和暂存', tags: ['立项', '模板', '自动编码'] },
-          { name: '立项审批', icon: 'check-circle', description: '自动路由审批流程，审批留痕并更新项目状态', tags: ['审批', '流程', '留痕'] },
-        ]} />
-      );
-      
-      const ProcurementManagement = () => (
-        <FunctionPlaceholder title="采购管理" features={[
-          { name: '采购计划台账', icon: 'calendar', description: '各部门采购计划汇总，形成年度采购计划', tags: ['采购计划', '台账'] },
-          { name: '采购文件编写', icon: 'file-edit', description: '基于模板编写，AI智能助手辅助', tags: ['模板', 'AI辅助'] },
-          { name: '采购结果审批', icon: 'check-square', description: '采购结果审批流程，包含AI智能审核', tags: ['审批', 'AI审核'] },
-          { name: '评标专家抽取', icon: 'users', description: '随机抽取评标机构和专家，支持异常重抽', tags: ['抽取', '专家库'] },
-          { name: '采购文件模板', icon: 'folder', description: '采购部门按类型设定模板，供申请时使用', tags: ['模板库'] },
-        ]} />
-      );
-      
-      const ContractsManagement = () => (
-        <FunctionPlaceholder title="合同管理" features={[
-          { name: '相对方库', icon: 'building', description: '各部门维护相对方，支持多部门维护', tags: ['相对方', '准入'] },
-          { name: '合同模板库', icon: 'file-text', description: '法务部门维护标准范本，支持版本控制', tags: ['范本', '版本'] },
-          { name: '合同起草', icon: 'edit', description: '基于模板起草，AI智能提醒补充条款', tags: ['AI辅助', '条款检查'] },
-          { name: '合同履约管理', icon: 'clock', description: '履约节点提取、日历视图、付款计划', tags: ['履约', '节点'] },
-          { name: '合同变更', icon: 'refresh-cw', description: '合同内容变更发起新审批，与原合同关联', tags: ['变更', '关联'] },
-          { name: '电子签章', icon: 'stamp', description: '支持电子印章和电子签名，CA认证', tags: ['电子签章', 'CA'] },
-        ]} />
-      );
-      
-      const ProgressManagement = () => (
-        <FunctionPlaceholder title="进度管理" features={[
-          { name: '里程碑设置', icon: 'flag', description: '自定义项目里程碑', tags: ['里程碑'] },
-          { name: 'WBS任务分解', icon: 'list', description: '多级WBS分解，支持甘特图、看板视图', tags: ['WBS', '甘特图'] },
-          { name: '任务提醒', icon: 'bell', description: '按默认值提前提醒任务情况', tags: ['提醒', '预警'] },
-        ]} />
-      );
-      
-      const CostsManagement = () => (
-        <FunctionPlaceholder title="成本管理" features={[
-          { name: '项目成本视图', icon: 'bar-chart-3', description: '关联财务预算，实时汇聚合同、支付、报销数据', tags: ['预算', '成本'] },
-          { name: '成本分析', icon: 'pie-chart', description: '结合项目进度分析当前成本支出情况', tags: ['分析', '偏差'] },
-        ]} />
-      );
-      
-      const ResourcesManagement = () => (
-        <FunctionPlaceholder title="资源管理" features={[
-          { name: '项目团队管理', icon: 'users', description: '动态管理项目成员，支持跨部门人员', tags: ['团队', '成员'] },
-          { name: '项目成员考勤管理', icon: 'calendar-check', description: '人员及设备项目考勤，一人一天一项目', tags: ['考勤', '互斥'] },
-          { name: '硬件资源管理', icon: 'camera', description: '摄像头监控接入，支持海康、大华等主流厂商', tags: ['监控', '接入'] },
-        ]} />
-      );
-      
-      const AcceptanceManagement = () => (
-        <FunctionPlaceholder title="验收管理" features={[
-          { name: '验收处理', icon: 'check-square', description: '自动或手动创建验收任务，标准验收报告模板', tags: ['验收', '模板'] },
-          { name: '验收提醒', icon: 'bell', description: '根据验收时间设置提前提醒，支持多个提醒', tags: ['提醒'] },
-        ]} />
-      );
-      
-      const ArchivesManagement = () => (
-        <FunctionPlaceholder title="档案管理" features={[
-          { name: '项目文件', icon: 'folder', description: '预置标准归档目录，自动归集关键产出', tags: ['归档', '目录'] },
-          { name: '档案管理', icon: 'archive', description: '灵活设置通用档案目录，必填项告警', tags: ['档案', '完整性'] },
-        ]} />
-      );
-      
-      const AchievementsManagement = () => (
-        <FunctionPlaceholder title="成果管理" features={[
-          { name: '成果管理', icon: 'award', description: '在线填报成果审核申请，成果与项目双向关联', tags: ['成果', '关联'] },
-          { name: '科技奖项', icon: 'trophy', description: '科技奖项项目信息管理，包含完成单位、完成人等', tags: ['奖项', '专利'] },
-          { name: '专利管理', icon: 'copyright', description: '专利信息管理，包含申请号、专利权人等', tags: ['专利', '软著'] },
-          { name: '软件著作权', icon: 'file-code', description: '软件著作权信息管理，包含登记号等', tags: ['软著'] },
-          { name: '论文/标准/工法', icon: 'book-open', description: '论文、标准、工法等成果分类展示', tags: ['论文', '标准', '工法'] },
-        ]} />
-      );
-      
-      const InvestmentManagement = () => (
-        <FunctionPlaceholder title="投资管理" features={[
-          { name: '投资计划编制', icon: 'edit-3', description: '子公司在线填报，系统自动校验是否符合主业', tags: ['计划', '编制'] },
-          { name: '投资计划调整', icon: 'refresh-cw', description: '根据要求调整投资计划，记录每次调整', tags: ['调整', '记录'] },
-        ]} />
-      );
-      
-      const WarningsManagement = () => (
-        <FunctionPlaceholder title="智能预警" features={[
-          { name: '全局风险预警规则库', icon: 'alert-triangle', description: '集中管理所有业务线预警规则，支持分级预警', tags: ['规则库', '分级'] },
-          { name: '采购提醒', icon: 'bell', description: '立项完成后提醒发起采购', tags: ['采购'] },
-          { name: '合同预警', icon: 'file-alert', description: '合同到期、收付款逾期、资质到期、履约异常预警', tags: ['合同', '履约'] },
-          { name: '验收提醒', icon: 'check-square', description: '根据验收时间设置提前提醒', tags: ['验收'] },
-          { name: '进度提醒', icon: 'gantt-chart', description: '按默认值提前提醒相关人员任务情况', tags: ['进度'] },
-        ]} />
-      );
-      
-      const SettingsManagement = () => (
-        <FunctionPlaceholder title="基础能力" features={[
-          { name: '组织架构管理', icon: 'building-2', description: '树形结构创建和维护组织架构，支持导入企微', tags: ['组织', '企微'] },
-          { name: '角色权限配置', icon: 'shield', description: '基于RBAC的精细化权限管理，支持项目敏感级别', tags: ['RBAC', '权限'] },
-          { name: '数据穿透规则', icon: 'eye', description: '实现上级看下级，平级不可见的数据管控', tags: ['穿透', '隔离'] },
-          { name: '多租户管理', icon: 'users', description: 'SaaS核心能力，实现数据、配置、文件完全隔离', tags: ['多租户', 'SaaS'] },
-          { name: 'API网关', icon: 'server', description: '提供标准RESTful API，支持OAUTH2.0认证', tags: ['API', '集成'] },
-          { name: '数据交换中心', icon: 'refresh-cw', description: '支持与财务、HR、OA、档案等系统数据同步', tags: ['同步', '集成'] },
-        ]} />
-      );
-      
-      // ==================== MAIN APP ====================
-      const App = () => {
-        const [currentModule, setCurrentModule] = useState('dashboard');
+              
+              <div className="max-w-7xl mx-auto px-5 py-6">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-8">
+                  {[
+                    { label: '总预算', value: `¥${(selectedProject.budget / 10000).toFixed(0)}万` },
+                    { label: '已发生成本', value: `¥${(selectedProject.budgetUsed / 10000).toFixed(0)}万` },
+                    { label: '整体进度', value: `${selectedProject.progress}%` },
+                    { label: '项目成员', value: '8人' },
+                  ].map((stat, idx) => (
+                    <div key={idx} className="bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm">
+                      <p className="text-[#666666] text-sm mb-1">{stat.label}</p>
+                      <p className="text-2xl font-bold text-[#333333]">{stat.value}</p>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="bg-white rounded-lg border border-[#E5E5E5] shadow-sm overflow-hidden">
+                  <div className="flex border-b border-[#E5E5E5]">
+                    {['概览', '立项', '采购', '合同', '进度', '成本', '验收', '档案', '预警'].map((tab, idx) => (
+                      <button
+                        key={tab}
+                        onClick={() => setActiveTab(tab)}
+                        className={`px-6 py-4 text-sm font-medium transition-colors ${
+                          activeTab === tab ? 'tab-active' : 'text-[#666666] hover:text-[#333333]'
+                        }`}
+                      >
+                        {tab}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="p-6">
+                    {activeTab === '概览' ? (
+                      <div className="text-center py-12 text-[#666666]">
+                        <i className="lucide-info text-4xl text-[#999999] mb-4"></i>
+                        <p className="text-lg">项目概览内容区域</p>
+                        <p className="text-sm mt-2">左侧：项目信息 + 最新动态</p>
+                        <p className="text-sm">右侧：快捷操作 + 待办事项</p>
+                      </div>
+                    ) : (
+                      <div className="text-center py-12 text-[#666666]">
+                        <i className="lucide-file-locked text-4xl text-[#999999] mb-4"></i>
+                        <p className="text-lg">"{activeTab}" 模块内容待后续设计</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        };
         
-        const renderModule = () => {
-          switch (currentModule) {
-            case 'dashboard': return <Dashboard />;
-            case 'projects': return <ProjectList />;
-            case 'initiation': return <InitiationManagement />;
-            case 'procurement': return <ProcurementManagement />;
-            case 'contracts': return <ContractsManagement />;
-            case 'progress': return <ProgressManagement />;
-            case 'costs': return <CostsManagement />;
-            case 'resources': return <ResourcesManagement />;
-            case 'acceptance': return <AcceptanceManagement />;
-            case 'archives': return <ArchivesManagement />;
-            case 'achievements': return <AchievementsManagement />;
-            case 'investment': return <InvestmentManagement />;
-            case 'warnings': return <WarningsManagement />;
-            case 'settings': return <SettingsManagement />;
-            default: return <Dashboard />;
+        const renderCurrentPage = () => {
+          switch (currentPage) {
+            case 'home': return renderHomePage();
+            case 'projects': return renderProjectsPage();
+            case 'detail': return renderDetailPage();
+            default: return renderHomePage();
           }
         };
         
         return (
-          <div className="flex min-h-screen">
-            <aside className="w-72 fixed left-0 top-0 bottom-0 bg-[#0A0F1D]/90 backdrop-blur-xl border-r border-[#1E293B] z-10">
-              <div className="p-8">
-                <div className="animate-fade-in-up flex items-center gap-3 mb-10">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-[0_0_40px_rgba(245,158,11,0.15)]">
-                    <i className="lucide-wine text-[#0A0F1D] text-2xl"></i>
-                  </div>
-                  <div>
-                    <h1 className="font-display font-bold text-[#FEFAF5] text-lg"></h1>
-                    <p className="text-[#64748B] text-sm font-body">项目一体化平台</p>
-                  </div>
-                </div>
-                
-                <nav className="space-y-2">
-                  {modules.map((module, idx) => (
-                    <button
-                      key={module.id}
-                      onClick={() => setCurrentModule(module.id)}
-                      className={`animate-fade-in-up stagger-${idx + 1} w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all duration-300 ${
-                        currentModule === module.id ? 'bg-amber-500/10 text-amber-500 shadow-[0_0_40px_rgba(245,158,11,0.15)]' : 'text-[#64748B] hover:text-[#FEFAF5] hover:bg-[#1E293B]/50'
-                      }`}
-                    >
-                      <i className={`lucide-${module.icon} text-xl`}></i>
-                      <span className="font-display font-medium">{module.name}</span>
-                      {currentModule === module.id && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-amber-500"></div>}
-                    </button>
-                  ))}
-                </nav>
-              </div>
-              
-              <div className="absolute bottom-0 left-0 right-0 p-8">
-                <div className="animate-fade-in-up stagger-8 gradient-border rounded-xl p-4 bg-[#0F172A]/50">
+          <div className="min-h-screen">
+            <nav className="bg-white border-b border-[#E5E5E5] sticky top-0 z-50">
+              <div className="max-w-7xl mx-auto px-5 h-16 flex items-center justify-between">
+                <div className="flex items-center gap-8">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[#1E293B] flex items-center justify-center">
-                      <i className="lucide-user text-[#64748B]"></i>
+                    <div className="w-9 h-9 rounded-lg bg-junpin flex items-center justify-center">
+                      <i className="lucide-building text-white"></i>
                     </div>
-                    <div className="flex-1">
-                      <p className="font-display font-medium text-[#FEFAF5] text-sm">管理员</p>
-                      <p className="text-[#64748B] text-xs font-body">数字与信息化中心</p>
+                    <span className="text-lg font-bold text-[#333333]">君品绿·项目一体化平台</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {[
+                      { id: 'home', label: '首页', icon: 'home' },
+                      { id: 'projects', label: '项目总览', icon: 'building-2' },
+                      { id: 'business', label: '业务中心', icon: 'briefcase' },
+                      { id: 'data', label: '数据中心', icon: 'bar-chart-3' },
+                      { id: 'settings', label: '系统管理', icon: 'settings' },
+                    ].map((nav) => (
+                      <button
+                        key={nav.id}
+                        onClick={() => setCurrentPage(nav.id === 'home' ? 'home' : nav.id === 'projects' ? 'projects' : 'home')}
+                        className={`px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium transition-colors ${
+                          (nav.id === 'home' && currentPage === 'home') || 
+                          (nav.id === 'projects' && currentPage === 'projects') || 
+                          (nav.id === 'projects' && currentPage === 'detail')
+                            ? 'bg-[#F0F7F4] text-junpin' 
+                            : 'text-[#666666] hover:text-[#333333]'
+                        }`}
+                      >
+                        <i className={`lucide-${nav.icon}`}></i>
+                        {nav.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <button className="relative p-2 rounded-lg text-[#666666] hover:text-[#333333] transition-colors">
+                    <i className="lucide-bell text-xl"></i>
+                    <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#F53F3F]"></span>
+                  </button>
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-full bg-[#F0F7F4] flex items-center justify-center">
+                      <i className="lucide-user text-[#666666]"></i>
                     </div>
-                    <button className="text-[#64748B] hover:text-[#FEFAF5] transition-colors">
-                      <i className="lucide-settings"></i>
-                    </button>
+                    <span className="text-sm font-medium text-[#333333]">管理员</span>
                   </div>
                 </div>
               </div>
-            </aside>
+            </nav>
             
-            <main className="flex-1 ml-72">
-              <header className="sticky top-0 z-10 bg-[#0A0F1D]/70 backdrop-blur-xl border-b border-[#1E293B]">
-                <div className="px-8 py-4 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <button className="p-2 rounded-lg bg-[#1E293B]/50 text-[#64748B] hover:text-[#FEFAF5] transition-colors">
-                      <i className="lucide-search"></i>
-                    </button>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <button className="relative p-2 rounded-lg text-[#64748B] hover:text-[#FEFAF5] transition-colors">
-                      <i className="lucide-bell text-xl"></i>
-                      <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500"></span>
-                    </button>
-                    <div className="h-8 w-px bg-[#1E293B]"></div>
-                    <div className="text-[#64748B] text-sm font-body">v1.0.0 · 需求完整度 100%</div>
-                  </div>
-                </div>
-              </header>
-              
-              <div className="min-h-[calc(100vh-73px)]">
-                {renderModule()}
-              </div>
-            </main>
+            <main>{renderCurrentPage()}</main>
           </div>
         );
       };
       
-      ReactDOM.render(<App />, document.getElementById('root'));
+      ReactDOM.render(<App />, document.getElementById('app'));
     </script>
   </body>
 </html>

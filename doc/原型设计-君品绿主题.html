@@ -41,10 +41,10 @@
     
     <script>
       const mockProjects = [
-        { id: 'PJ2026001', name: '包装车间智能化升级', type: 'equipment', manager: '张明远', department: '生产部', progress: 82, budget: 12800000, budgetUsed: 10500000, status: 'normal', health: { score: 88, label: '正常' }, daysLeft: 15 },
-        { id: 'PJ2026002', name: '质量管控AI平台', type: 'research', manager: '李思源', department: '技术中心', progress: 45, budget: 5200000, budgetUsed: 4800000, status: 'warning', health: { score: 62, label: '预警' }, daysLeft: -2 },
-        { id: 'PJ2026003', name: '营销数字化中台', type: 'it', manager: '王静怡', department: '信息中心', progress: 68, budget: 8500000, budgetUsed: 5800000, status: 'normal', health: { score: 92, label: '正常' }, daysLeft: 30 },
-        { id: 'PJ2026004', name: '基酒储存设施扩建', type: 'investment', manager: '陈建国', department: '基建部', progress: 28, budget: 35000000, budgetUsed: 12000000, status: 'danger', health: { score: 48, label: '逾期' }, daysLeft: -8 },
+        { id: 'PJ2026001', name: '包装车间智能化升级', type: 'equipment', manager: '张明远', department: '业务部门A', progress: 82, budget: 12800000, budgetUsed: 10500000, status: 'normal', health: { score: 88, label: '正常' }, daysLeft: 15 },
+        { id: 'PJ2026002', name: '质量管控AI平台', type: 'research', manager: '李思源', department: '业务部门B', progress: 45, budget: 5200000, budgetUsed: 4800000, status: 'warning', health: { score: 62, label: '预警' }, daysLeft: -2 },
+        { id: 'PJ2026003', name: '营销数字化中台', type: 'it', manager: '王静怡', department: '业务部门C', progress: 68, budget: 8500000, budgetUsed: 5800000, status: 'normal', health: { score: 92, label: '正常' }, daysLeft: 30 },
+        { id: 'PJ2026004', name: '基酒储存设施扩建', type: 'investment', manager: '陈建国', department: '业务部门D', progress: 28, budget: 35000000, budgetUsed: 12000000, status: 'danger', health: { score: 48, label: '逾期' }, daysLeft: -8 },
       ];
       
       const App = () => {
@@ -57,7 +57,7 @@
             <div className="max-w-7xl mx-auto px-5 py-8">
               <div className="mb-8">
                 <h1 className="text-2xl font-bold text-[#333333] mb-2">君品绿·项目一体化平台</h1>
-                <p className="text-[#666666]">贵州习酒 · 项目管理数字化</p>
+                <p className="text-[#666666]"> · 项目管理数字化</p>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
@@ -187,7 +187,7 @@
                     <option>全部状态</option><option>正常</option><option>预警</option><option>逾期</option>
                   </select>
                   <select className="px-3 py-2 rounded-md border border-[#E5E5E5] text-sm text-[#333333] focus:outline-none focus:border-junpin">
-                    <option>全部部门</option><option>生产部</option><option>技术中心</option><option>信息中心</option>
+                    <option>全部部门</option><option>业务部门A</option><option>业务部门B</option><option>业务部门C</option>
                   </select>
                   <div className="flex-1"></div>
                   {['全部', '进行中', '已逾期', '本月到期'].map((tag, idx) => (

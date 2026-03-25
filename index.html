@@ -20,6 +20,7 @@
       .btn-junpin { background-color: var(--junpin-green); color: white; }
       .btn-junpin:hover { background-color: #084C2C; }
       .tab-active { color: var(--junpin-green); border-bottom: 2px solid var(--junpin-green); }
+      .nav-btn-active { background-color: #F0F7F4; color: var(--junpin-green); }
       .page { display: none; }
       .page.active { display: block; }
       .submenu { display: none; position: absolute; top: 100%; left: 0; min-width: 200px; background: white; border: 1px solid var(--border-color); border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); z-index: 100; }
@@ -28,6 +29,10 @@
       .submenu-item:hover { background-color: #F0F7F4; }
       .detail-content { display: none; }
       .detail-content.active { display: block; }
+      .health-item { transition: all 0.2s; }
+      .health-item:hover { background-color: #F0F7F4; }
+      .warning-item { transition: all 0.2s; }
+      .warning-item:hover { background-color: #F0F7F4; }
     </style>
   </head>
   <body>
@@ -43,72 +48,72 @@
               <span class="text-lg font-bold text-[#333333]">君品绿·项目一体化平台</span>
             </div>
             <div class="flex items-center gap-1">
-              <button onclick="showPage('home')" class="px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium bg-[#F0F7F4] text-junpin">
+              <button id="nav-home" onclick="showPage('home')" class="nav-btn px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium bg-[#F0F7F4] text-junpin">
                 <i class="lucide-home"></i>
                 首页
               </button>
-              <button onclick="showPage('projects')" class="px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium text-[#666666] hover:text-[#333333]">
+              <button id="nav-projects" onclick="showPage('projects')" class="nav-btn px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium text-[#666666] hover:text-[#333333]">
                 <i class="lucide-building-2"></i>
                 项目总览
               </button>
               <div class="relative nav-item">
-                <button class="px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium text-[#666666] hover:text-[#333333]">
+                <button id="nav-business" class="nav-btn px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium text-[#666666] hover:text-[#333333]">
                   <i class="lucide-briefcase"></i>
                   业务中心
                   <i class="lucide-chevron-down text-xs"></i>
                 </button>
                 <div class="submenu">
-                  <div class="submenu-item" onclick="showPage('procurement')">
+                  <div id="nav-procurement" class="submenu-item" onclick="showPage('procurement')">
                     <i class="lucide-package mr-2"></i>
                     采购管理
                   </div>
-                  <div class="submenu-item" onclick="showPage('contracts')">
+                  <div id="nav-contracts" class="submenu-item" onclick="showPage('contracts')">
                     <i class="lucide-file-check mr-2"></i>
                     合同管理
                   </div>
                 </div>
               </div>
               <div class="relative nav-item">
-                <button class="px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium text-[#666666] hover:text-[#333333]">
+                <button id="nav-data" class="nav-btn px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium text-[#666666] hover:text-[#333333]">
                   <i class="lucide-bar-chart-3"></i>
                   数据中心
                   <i class="lucide-chevron-down text-xs"></i>
                 </button>
                 <div class="submenu">
-                  <div class="submenu-item" onclick="showPage('dashboard')">
+                  <div id="nav-dashboard" class="submenu-item" onclick="showPage('dashboard')">
                     <i class="lucide-layout-dashboard mr-2"></i>
                     领导驾驶舱
                   </div>
-                  <div class="submenu-item" onclick="showPage('reports')">
+                  <div id="nav-reports" class="submenu-item" onclick="showPage('reports')">
                     <i class="lucide-file-text mr-2"></i>
                     统计报表
                   </div>
                 </div>
               </div>
               <div class="relative nav-item">
-                <button class="px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium text-[#666666] hover:text-[#333333]">
+                <button id="nav-system" class="nav-btn px-4 py-2 rounded-md flex items-center gap-2 text-sm font-medium text-[#666666] hover:text-[#333333]">
                   <i class="lucide-settings"></i>
                   系统管理
                   <i class="lucide-chevron-down text-xs"></i>
                 </button>
                 <div class="submenu">
-                  <div class="submenu-item" onclick="showPage('organization')">
+                  <div id="nav-organization" class="submenu-item" onclick="showPage('organization')">
                     <i class="lucide-users mr-2"></i>
                     组织架构
                   </div>
-                  <div class="submenu-item" onclick="showPage('roles')">
+                  <div id="nav-roles" class="submenu-item" onclick="showPage('roles')">
                     <i class="lucide-shield mr-2"></i>
                     角色权限
                   </div>
-                  <div class="submenu-item" onclick="showPage('workflow')">
+                  <div id="nav-workflow" class="submenu-item" onclick="showPage('workflow')">
                     <i class="lucide-git-branch mr-2"></i>
                     流程配置
                   </div>
-                  <div class="submenu-item" onclick="showPage('warnings')">
+                  <div id="nav-warnings" class="submenu-item" onclick="showPage('warnings')">
                     <i class="lucide-alert-triangle mr-2"></i>
                     预警规则
                   </div>
-                  <div class="submenu-item" onclick="showPage('logs')">
+                  <div id="nav-logs" class="submenu-item" onclick="showPage('logs')">
                     <i class="lucide-history mr-2"></i>
                     系统日志
                   </div>
@@ -135,26 +140,244 @@
       <div id="page-home" class="page active">
         <div class="max-w-7xl mx-auto px-5 py-8">
           <div class="mb-8">
-            <h1 class="text-2xl font-bold text-[#333333] mb-2">君品绿·项目一体化平台</h1>
-            <p class="text-[#666666]">项目管理数字化</p>
+            <div class="flex items-center justify-between">
+              <div>
+                <h1 class="text-2xl font-bold text-[#333333] mb-2">君品绿·项目一体化平台</h1>
+                <p class="text-[#666666]">项目管理数字化</p>
+              </div>
+              <button class="flex items-center gap-2 px-4 py-2 rounded-md border border-[#E5E5E5] text-[#666666] hover:text-[#333333] hover:border-[#999999] transition-colors">
+                <i class="lucide-refresh-cw"></i>
+                刷新
+              </button>
+            </div>
           </div>
           
+          <!-- 核心指标卡片 -->
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-            <div class="bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm">
-              <p class="text-[#666666] text-sm mb-2">项目总数</p>
-              <p class="text-3xl font-bold text-[#333333]">128</p>
+            <div class="bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onclick="showPage('projects')">
+              <div class="flex items-center justify-between mb-3">
+                <p class="text-junpin text-sm font-medium">项目总数</p>
+                <div class="w-8 h-8 rounded-full bg-[#F0F7F4] flex items-center justify-center">
+                  <i class="lucide-building-2 text-junpin text-sm"></i>
+                </div>
+              </div>
+              <p class="text-3xl font-bold text-[#333333] mb-2">128</p>
+              <div class="flex items-center gap-1 text-sm">
+                <i class="lucide-trending-up text-junpin"></i>
+                <span class="text-junpin">较上月 +12%</span>
+              </div>
             </div>
-            <div class="bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm">
-              <p class="text-[#666666] text-sm mb-2">进行中</p>
-              <p class="text-3xl font-bold text-[#333333]">45</p>
+            <div class="bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onclick="showPage('projects')">
+              <div class="flex items-center justify-between mb-3">
+                <p class="text-junpin text-sm font-medium">进行中</p>
+                <div class="w-8 h-8 rounded-full bg-[#F0F7F4] flex items-center justify-center">
+                  <i class="lucide-clock text-junpin text-sm"></i>
+                </div>
+              </div>
+              <p class="text-3xl font-bold text-[#333333] mb-2">45</p>
+              <div class="w-full h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
+                <div class="h-full bg-junpin rounded-full" style="width: 35%"></div>
+              </div>
             </div>
-            <div class="bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm">
-              <p class="text-[#666666] text-sm mb-2">已逾期</p>
-              <p class="text-3xl font-bold text-[#333333]">8</p>
+            <div class="bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onclick="showPage('projects')">
+              <div class="flex items-center justify-between mb-3">
+                <p class="text-[#F53F3F] text-sm font-medium">已逾期</p>
+                <div class="w-8 h-8 rounded-full bg-[#FFF0F0] flex items-center justify-center">
+                  <i class="lucide-alert-triangle text-[#F53F3F] text-sm"></i>
+                </div>
+              </div>
+              <p class="text-3xl font-bold text-[#333333] mb-2">8</p>
+              <div class="flex items-center gap-1 text-sm">
+                <span class="text-[#F53F3F]">需要关注</span>
+              </div>
             </div>
-            <div class="bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm">
-              <p class="text-[#666666] text-sm mb-2">风险项目</p>
-              <p class="text-3xl font-bold text-[#333333]">12</p>
+            <div class="bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm hover:shadow-md transition-shadow cursor-pointer" onclick="showPage('projects')">
+              <div class="flex items-center justify-between mb-3">
+                <p class="text-[#FF7D00] text-sm font-medium">风险项目</p>
+                <div class="w-8 h-8 rounded-full bg-[#FFF5E6] flex items-center justify-center">
+                  <i class="lucide-shield-alert text-[#FF7D00] text-sm"></i>
+                </div>
+              </div>
+              <p class="text-3xl font-bold text-[#333333] mb-2">12</p>
+              <div class="flex items-center gap-1 text-sm">
+                <span class="text-[#FF7D00]">橙色预警</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 下方内容区域 -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <!-- 项目健康度 TOP 5 -->
+            <div class="bg-white rounded-lg border border-[#E5E5E5] shadow-sm">
+              <div class="p-5 border-b border-[#E5E5E5]">
+                <h2 class="text-lg font-semibold text-[#333333]">项目健康度 TOP 5</h2>
+              </div>
+              <div class="p-4">
+                <div class="space-y-3">
+                  <div class="health-item rounded-lg p-4 flex items-center gap-4 cursor-pointer" onclick="showPage('detail')">
+                    <div class="w-10 h-10 rounded-full bg-[#F0F7F4] flex items-center justify-center flex-shrink-0">
+                      <i class="lucide-building text-junpin"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <h3 class="font-medium text-[#333333] truncate">包装车间智能化升级</h3>
+                      <p class="text-sm text-[#666666]">张明远 · 业务部门A</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div class="flex items-center gap-1">
+                        <div class="w-2 h-2 rounded-full bg-[#00B42A]"></div>
+                        <span class="text-sm text-[#00B42A]">正常</span>
+                      </div>
+                      <span class="text-sm font-medium text-[#333333]">82%</span>
+                    </div>
+                  </div>
+                  
+                  <div class="health-item rounded-lg p-4 flex items-center gap-4 cursor-pointer" onclick="showPage('detail')">
+                    <div class="w-10 h-10 rounded-full bg-[#F0F7F4] flex items-center justify-center flex-shrink-0">
+                      <i class="lucide-building text-junpin"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <h3 class="font-medium text-[#333333] truncate">质量管控体系建设</h3>
+                      <p class="text-sm text-[#666666]">李思源 · 技术中心</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div class="flex items-center gap-1">
+                        <div class="w-2 h-2 rounded-full bg-[#FF7D00]"></div>
+                        <span class="text-sm text-[#FF7D00]">预警</span>
+                      </div>
+                      <span class="text-sm font-medium text-[#333333]">45%</span>
+                    </div>
+                  </div>
+                  
+                  <div class="health-item rounded-lg p-4 flex items-center gap-4 cursor-pointer" onclick="showPage('detail')">
+                    <div class="w-10 h-10 rounded-full bg-[#F0F7F4] flex items-center justify-center flex-shrink-0">
+                      <i class="lucide-building text-junpin"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <h3 class="font-medium text-[#333333] truncate">营销中台数字化</h3>
+                      <p class="text-sm text-[#666666]">王静怡 · 信息中心</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div class="flex items-center gap-1">
+                        <div class="w-2 h-2 rounded-full bg-[#00B42A]"></div>
+                        <span class="text-sm text-[#00B42A]">正常</span>
+                      </div>
+                      <span class="text-sm font-medium text-[#333333]">68%</span>
+                    </div>
+                  </div>
+                  
+                  <div class="health-item rounded-lg p-4 flex items-center gap-4 cursor-pointer" onclick="showPage('detail')">
+                    <div class="w-10 h-10 rounded-full bg-[#F0F7F4] flex items-center justify-center flex-shrink-0">
+                      <i class="lucide-building text-junpin"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <h3 class="font-medium text-[#333333] truncate">供应链系统改造</h3>
+                      <p class="text-sm text-[#666666]">陈志远 · 供应链部</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div class="flex items-center gap-1">
+                        <div class="w-2 h-2 rounded-full bg-[#F53F3F]"></div>
+                        <span class="text-sm text-[#F53F3F]">逾期</span>
+                      </div>
+                      <span class="text-sm font-medium text-[#333333]">92%</span>
+                    </div>
+                  </div>
+                  
+                  <div class="health-item rounded-lg p-4 flex items-center gap-4 cursor-pointer" onclick="showPage('detail')">
+                    <div class="w-10 h-10 rounded-full bg-[#F0F7F4] flex items-center justify-center flex-shrink-0">
+                      <i class="lucide-building text-junpin"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <h3 class="font-medium text-[#333333] truncate">研发实验室升级</h3>
+                      <p class="text-sm text-[#666666]">赵雅婷 · 研发中心</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <div class="flex items-center gap-1">
+                        <div class="w-2 h-2 rounded-full bg-[#00B42A]"></div>
+                        <span class="text-sm text-[#00B42A]">正常</span>
+                      </div>
+                      <span class="text-sm font-medium text-[#333333]">75%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 预警消息列表 -->
+            <div class="bg-white rounded-lg border border-[#E5E5E5] shadow-sm">
+              <div class="p-5 border-b border-[#E5E5E5]">
+                <h2 class="text-lg font-semibold text-[#333333]">预警消息</h2>
+              </div>
+              <div class="p-4">
+                <div class="space-y-3">
+                  <div class="warning-item rounded-lg p-4 flex items-start gap-4 cursor-pointer">
+                    <div class="w-10 h-10 rounded-full bg-[#FFF0F0] flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <i class="lucide-alert-triangle text-[#F53F3F]"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-start justify-between gap-2">
+                        <h3 class="font-medium text-[#333333]">质量管控体系建设已逾期</h3>
+                        <span class="text-xs text-[#999999] flex-shrink-0">2天前</span>
+                      </div>
+                      <p class="text-sm text-[#666666] mt-1">项目已逾期2天，当前进度45%，请关注</p>
+                      <div class="flex items-center gap-2 mt-2">
+                        <span class="px-2 py-0.5 rounded-full bg-[#FFF0F0] text-[#F53F3F] text-xs">逾期</span>
+                        <span class="text-xs text-[#666666]">李思源 · 技术中心</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="warning-item rounded-lg p-4 flex items-start gap-4 cursor-pointer">
+                    <div class="w-10 h-10 rounded-full bg-[#FFF5E6] flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <i class="lucide-alert-circle text-[#FF7D00]"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-start justify-between gap-2">
+                        <h3 class="font-medium text-[#333333]">营销中台数字化即将到期</h3>
+                        <span class="text-xs text-[#999999] flex-shrink-0">1天前</span>
+                      </div>
+                      <p class="text-sm text-[#666666] mt-1">项目剩余30天，当前进度68%，需加快推进</p>
+                      <div class="flex items-center gap-2 mt-2">
+                        <span class="px-2 py-0.5 rounded-full bg-[#FFF5E6] text-[#FF7D00] text-xs">预警</span>
+                        <span class="text-xs text-[#666666]">王静怡 · 信息中心</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="warning-item rounded-lg p-4 flex items-start gap-4 cursor-pointer">
+                    <div class="w-10 h-10 rounded-full bg-[#FFF0F0] flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <i class="lucide-wallet text-[#F53F3F]"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-start justify-between gap-2">
+                        <h3 class="font-medium text-[#333333]">供应链系统改造预算超支</h3>
+                        <span class="text-xs text-[#999999] flex-shrink-0">3天前</span>
+                      </div>
+                      <p class="text-sm text-[#666666] mt-1">已使用预算980万，超出预算120万</p>
+                      <div class="flex items-center gap-2 mt-2">
+                        <span class="px-2 py-0.5 rounded-full bg-[#FFF0F0] text-[#F53F3F] text-xs">超支</span>
+                        <span class="text-xs text-[#666666]">陈志远 · 供应链部</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="warning-item rounded-lg p-4 flex items-start gap-4 cursor-pointer">
+                    <div class="w-10 h-10 rounded-full bg-[#F0F7F4] flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <i class="lucide-info text-junpin"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-start justify-between gap-2">
+                        <h3 class="font-medium text-[#333333]">包装车间智能化升级进度更新</h3>
+                        <span class="text-xs text-[#999999] flex-shrink-0">5天前</span>
+                      </div>
+                      <p class="text-sm text-[#666666] mt-1">项目进度从78%更新至82%，剩余15天</p>
+                      <div class="flex items-center gap-2 mt-2">
+                        <span class="px-2 py-0.5 rounded-full bg-[#F0F7F4] text-junpin text-xs">进度</span>
+                        <span class="text-xs text-[#666666]">张明远 · 业务部门A</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -265,8 +488,89 @@
 
     <script>
       function showPage(page) {
+        // 隐藏所有页面
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        // 显示目标页面
         document.getElementById('page-' + page).classList.add('active');
+        
+        // 重置所有导航按钮样式
+        resetNavButtons();
+        
+        // 设置当前页面的导航按钮激活状态
+        setActiveNavButton(page);
+      }
+
+      function resetNavButtons() {
+        // 重置主导航按钮
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+          btn.classList.remove('nav-btn-active');
+          btn.classList.remove('bg-[#F0F7F4]');
+          btn.classList.remove('text-junpin');
+          btn.classList.add('text-[#666666]');
+        });
+        
+        // 重置子菜单项
+        document.querySelectorAll('.submenu-item').forEach(item => {
+          item.style.backgroundColor = '';
+          item.style.color = '';
+        });
+      }
+
+      function setActiveNavButton(page) {
+        const navMap = {
+          'home': 'nav-home',
+          'projects': 'nav-projects',
+          'procurement': 'nav-procurement',
+          'contracts': 'nav-contracts',
+          'dashboard': 'nav-dashboard',
+          'reports': 'nav-reports',
+          'organization': 'nav-organization',
+          'roles': 'nav-roles',
+          'workflow': 'nav-workflow',
+          'warnings': 'nav-warnings',
+          'logs': 'nav-logs'
+        };
+        
+        const navId = navMap[page];
+        if (navId) {
+          const element = document.getElementById(navId);
+          if (element) {
+            if (element.classList.contains('submenu-item')) {
+              // 子菜单项：高亮背景和文字
+              element.style.backgroundColor = '#F0F7F4';
+              element.style.color = '#0A5C36';
+              
+              // 同时高亮对应的父菜单
+              const parentMap = {
+                'procurement': 'nav-business',
+                'contracts': 'nav-business',
+                'dashboard': 'nav-data',
+                'reports': 'nav-data',
+                'organization': 'nav-system',
+                'roles': 'nav-system',
+                'workflow': 'nav-system',
+                'warnings': 'nav-system',
+                'logs': 'nav-system'
+              };
+              const parentNavId = parentMap[page];
+              if (parentNavId) {
+                const parentElement = document.getElementById(parentNavId);
+                if (parentElement) {
+                  parentElement.classList.add('nav-btn-active');
+                  parentElement.classList.add('bg-[#F0F7F4]');
+                  parentElement.classList.add('text-junpin');
+                  parentElement.classList.remove('text-[#666666]');
+                }
+              }
+            } else {
+              // 主导航按钮
+              element.classList.add('nav-btn-active');
+              element.classList.add('bg-[#F0F7F4]');
+              element.classList.add('text-junpin');
+              element.classList.remove('text-[#666666]');
+            }
+          }
+        }
       }
 
       function setDetailTab(tab) {

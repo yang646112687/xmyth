@@ -33,6 +33,12 @@
       .health-item:hover { background-color: #F0F7F4; }
       .warning-item { transition: all 0.2s; }
       .warning-item:hover { background-color: #F0F7F4; }
+      .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+      .modal.active { display: flex; }
+      .modal-content { background: white; border-radius: 12px; max-width: 800px; width: 90%; max-height: 90vh; overflow-y: auto; }
+      .template-card { cursor: pointer; transition: all 0.2s; border: 2px solid transparent; }
+      .template-card:hover { border-color: #0A5C36; background: #F0F7F4; }
+      .template-card.selected { border-color: #0A5C36; background: #F0F7F4; }
     </style>
   </head>
   <body>
@@ -386,17 +392,281 @@
       <!-- Projects Page -->
       <div id="page-projects" class="page">
         <div class="max-w-7xl mx-auto px-5 py-8">
-          <h1 class="text-2xl font-bold text-[#333333] mb-8">项目总览</h1>
-          <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-            <div class="bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm cursor-pointer" onclick="showPage('detail')">
-              <h3 class="font-semibold text-[#333333] mb-2">包装车间智能化升级</h3>
-              <p class="text-sm text-[#666666] mb-4">PJ2026001 · 张明远</p>
-              <div class="flex items-center justify-between text-sm mb-2">
-                <span class="text-[#666666]">进度</span>
-                <span class="font-medium text-[#333333]">82%</span>
+          <!-- 页面头部 -->
+          <div class="flex items-center justify-between mb-8">
+            <div>
+              <h1 class="text-2xl font-bold text-[#333333] mb-2">项目总览</h1>
+              <p class="text-[#666666]">查看和管理所有项目</p>
+            </div>
+            <button onclick="openCreateModal()" class="btn-junpin px-5 py-2.5 rounded-lg flex items-center gap-2 text-sm font-medium">
+              <i class="lucide-plus"></i>
+              新增项目
+            </button>
+          </div>
+          
+          <!-- 项目案例展示 -->
+          <div class="mb-10">
+            <div class="flex items-center justify-between mb-5">
+              <h2 class="text-lg font-semibold text-[#333333]">项目案例</h2>
+              <span class="text-sm text-[#666666]">点击案例可快速创建类似项目</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div class="template-card bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm" onclick="selectTemplate('intelligent')">
+                <div class="flex items-start gap-4">
+                  <div class="w-12 h-12 rounded-lg bg-[#F0F7F4] flex items-center justify-center flex-shrink-0">
+                    <i class="lucide-cpu text-junpin text-xl"></i>
+                  </div>
+                  <div class="flex-1">
+                    <h3 class="font-semibold text-[#333333] mb-1">智能化升级</h3>
+                    <p class="text-sm text-[#666666] mb-3">适用于设备改造、系统升级类项目</p>
+                    <div class="flex flex-wrap gap-2">
+                      <span class="px-2 py-1 bg-[#F0F7F4] text-junpin text-xs rounded">设备采购</span>
+                      <span class="px-2 py-1 bg-[#F0F7F4] text-junpin text-xs rounded">安装调试</span>
+                      <span class="px-2 py-1 bg-[#F0F7F4] text-junpin text-xs rounded">验收</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div class="w-full h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
-                <div class="h-full bg-junpin rounded-full" style="width: 82%"></div>
+              
+              <div class="template-card bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm" onclick="selectTemplate('construction')">
+                <div class="flex items-start gap-4">
+                  <div class="w-12 h-12 rounded-lg bg-[#FFF5E6] flex items-center justify-center flex-shrink-0">
+                    <i class="lucide-building-2 text-[#FF7D00] text-xl"></i>
+                  </div>
+                  <div class="flex-1">
+                    <h3 class="font-semibold text-[#333333] mb-1">工程建设</h3>
+                    <p class="text-sm text-[#666666] mb-3">适用于厂房建设、基础设施类项目</p>
+                    <div class="flex flex-wrap gap-2">
+                      <span class="px-2 py-1 bg-[#FFF5E6] text-[#FF7D00] text-xs rounded">立项审批</span>
+                      <span class="px-2 py-1 bg-[#FFF5E6] text-[#FF7D00] text-xs rounded">招投标</span>
+                      <span class="px-2 py-1 bg-[#FFF5E6] text-[#FF7D00] text-xs rounded">施工管理</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="template-card bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm" onclick="selectTemplate('digital')">
+                <div class="flex items-start gap-4">
+                  <div class="w-12 h-12 rounded-lg bg-[#E8F3FF] flex items-center justify-center flex-shrink-0">
+                    <i class="lucide-laptop text-[#165DFF] text-xl"></i>
+                  </div>
+                  <div class="flex-1">
+                    <h3 class="font-semibold text-[#333333] mb-1">数字化转型</h3>
+                    <p class="text-sm text-[#666666] mb-3">适用于系统开发、数字化建设类项目</p>
+                    <div class="flex flex-wrap gap-2">
+                      <span class="px-2 py-1 bg-[#E8F3FF] text-[#165DFF] text-xs rounded">需求分析</span>
+                      <span class="px-2 py-1 bg-[#E8F3FF] text-[#165DFF] text-xs rounded">开发</span>
+                      <span class="px-2 py-1 bg-[#E8F3FF] text-[#165DFF] text-xs rounded">上线</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 现有项目列表 -->
+          <div>
+            <h2 class="text-lg font-semibold text-[#333333] mb-5">现有项目</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+              <div class="bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm cursor-pointer hover:shadow-md transition-shadow" onclick="showPage('detail')">
+                <div class="flex items-start justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-[#F0F7F4] flex items-center justify-center">
+                      <i class="lucide-cpu text-junpin"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-semibold text-[#333333]">包装车间智能化升级</h3>
+                      <p class="text-sm text-[#666666]">PJ2026001 · 张明远</p>
+                    </div>
+                  </div>
+                  <span class="px-2 py-1 bg-[#F0F7F4] text-junpin text-xs rounded">进行中</span>
+                </div>
+                <div class="flex items-center justify-between text-sm mb-2">
+                  <span class="text-[#666666]">进度</span>
+                  <span class="font-medium text-[#333333]">82%</span>
+                </div>
+                <div class="w-full h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
+                  <div class="h-full bg-junpin rounded-full" style="width: 82%"></div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-[#E5E5E5] flex items-center justify-between text-sm">
+                  <span class="text-[#666666]">剩余 15 天</span>
+                  <span class="text-junpin cursor-pointer hover:underline">查看详情 →</span>
+                </div>
+              </div>
+              
+              <div class="bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm cursor-pointer hover:shadow-md transition-shadow" onclick="showPage('detail')">
+                <div class="flex items-start justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-[#FFF5E6] flex items-center justify-center">
+                      <i class="lucide-building-2 text-[#FF7D00]"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-semibold text-[#333333]">质量管控体系建设</h3>
+                      <p class="text-sm text-[#666666]">PJ2026002 · 李思源</p>
+                    </div>
+                  </div>
+                  <span class="px-2 py-1 bg-[#FFF0F0] text-[#F53F3F] text-xs rounded">已逾期</span>
+                </div>
+                <div class="flex items-center justify-between text-sm mb-2">
+                  <span class="text-[#666666]">进度</span>
+                  <span class="font-medium text-[#333333]">45%</span>
+                </div>
+                <div class="w-full h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
+                  <div class="h-full bg-[#F53F3F] rounded-full" style="width: 45%"></div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-[#E5E5E5] flex items-center justify-between text-sm">
+                  <span class="text-[#F53F3F]]">逾期 2 天</span>
+                  <span class="text-junpin cursor-pointer hover:underline">查看详情 →</span>
+                </div>
+              </div>
+              
+              <div class="bg-white rounded-lg border border-[#E5E5E5] p-5 shadow-sm cursor-pointer hover:shadow-md transition-shadow" onclick="showPage('detail')">
+                <div class="flex items-start justify-between mb-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-[#E8F3FF] flex items-center justify-center">
+                      <i class="lucide-laptop text-[#165DFF]"></i>
+                    </div>
+                    <div>
+                      <h3 class="font-semibold text-[#333333]">营销中台数字化</h3>
+                      <p class="text-sm text-[#666666]">PJ2026003 · 王静怡</p>
+                    </div>
+                  </div>
+                  <span class="px-2 py-1 bg-[#F0F7F4] text-junpin text-xs rounded">进行中</span>
+                </div>
+                <div class="flex items-center justify-between text-sm mb-2">
+                  <span class="text-[#666666]">进度</span>
+                  <span class="font-medium text-[#333333]">68%</span>
+                </div>
+                <div class="w-full h-2 bg-[#E5E5E5] rounded-full overflow-hidden">
+                  <div class="h-full bg-[#165DFF] rounded-full" style="width: 68%"></div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-[#E5E5E5] flex items-center justify-between text-sm">
+                  <span class="text-[#666666]">剩余 30 天</span>
+                  <span class="text-junpin cursor-pointer hover:underline">查看详情 →</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 新增项目弹窗 -->
+      <div id="create-modal" class="modal">
+        <div class="modal-content">
+          <div class="p-6 border-b border-[#E5E5E5] flex items-center justify-between">
+            <h2 class="text-xl font-bold text-[#333333]">新增项目</h2>
+            <button onclick="closeCreateModal()" class="p-2 hover:bg-[#F0F7F4] rounded-lg transition-colors">
+              <i class="lucide-x text-[#666666]"></i>
+            </button>
+          </div>
+          
+          <div class="p-6">
+            <!-- 步骤1：选择模板 -->
+            <div id="step-template">
+              <h3 class="text-lg font-semibold text-[#333333] mb-2">选择项目类型</h3>
+              <p class="text-[#666666] mb-6">根据项目类型选择合适的模板，我们会预填相关内容</p>
+              
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div id="template-intelligent" class="template-card bg-white rounded-lg border border-[#E5E5E5] p-5" onclick="selectTemplateType('intelligent')">
+                  <div class="w-12 h-12 rounded-lg bg-[#F0F7F4] flex items-center justify-center mb-4">
+                    <i class="lucide-cpu text-junpin text-xl"></i>
+                  </div>
+                  <h4 class="font-semibold text-[#333333] mb-2">智能化升级</h4>
+                  <p class="text-sm text-[#666666]">设备改造、系统升级、自动化建设</p>
+                </div>
+                
+                <div id="template-construction" class="template-card bg-white rounded-lg border border-[#E5E5E5] p-5" onclick="selectTemplateType('construction')">
+                  <div class="w-12 h-12 rounded-lg bg-[#FFF5E6] flex items-center justify-center mb-4">
+                    <i class="lucide-building-2 text-[#FF7D00] text-xl"></i>
+                  </div>
+                  <h4 class="font-semibold text-[#333333] mb-2">工程建设</h4>
+                  <p class="text-sm text-[#666666]">厂房建设、基础设施、土木工程</p>
+                </div>
+                
+                <div id="template-digital" class="template-card bg-white rounded-lg border border-[#E5E5E5] p-5" onclick="selectTemplateType('digital')">
+                  <div class="w-12 h-12 rounded-lg bg-[#E8F3FF] flex items-center justify-center mb-4">
+                    <i class="lucide-laptop text-[#165DFF] text-xl"></i>
+                  </div>
+                  <h4 class="font-semibold text-[#333333] mb-2">数字化转型</h4>
+                  <p class="text-sm text-[#666666]">系统开发、数字化建设、信息化项目</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center justify-end gap-3">
+                <button onclick="closeCreateModal()" class="px-4 py-2 rounded-lg border border-[#E5E5E5] text-[#666666] hover:text-[#333333] transition-colors">
+                  取消
+                </button>
+                <button id="next-to-form" onclick="goToFormStep()" class="btn-junpin px-4 py-2 rounded-lg text-white opacity-50 cursor-not-allowed" disabled>
+                  下一步
+                </button>
+              </div>
+            </div>
+            
+            <!-- 步骤2：填写表单 -->
+            <div id="step-form" class="hidden">
+              <div class="flex items-center gap-2 mb-6">
+                <button onclick="goToTemplateStep()" class="p-2 hover:bg-[#F0F7F4] rounded-lg transition-colors">
+                  <i class="lucide-arrow-left text-[#666666]"></i>
+                </button>
+                <div>
+                  <h3 class="text-lg font-semibold text-[#333333]">填写项目信息</h3>
+                  <p class="text-sm text-[#666666]">已选择模板：<span id="selected-template-name" class="text-junpin">智能化升级</span></p>
+                </div>
+              </div>
+              
+              <div class="space-y-5">
+                <div>
+                  <label class="block text-sm font-medium text-[#333333] mb-2">项目名称 *</label>
+                  <input type="text" id="project-name" class="w-full px-4 py-2.5 rounded-lg border border-[#E5E5E5] focus:border-junpin focus:outline-none" placeholder="请输入项目名称">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-5">
+                  <div>
+                    <label class="block text-sm font-medium text-[#333333] mb-2">项目负责人 *</label>
+                    <input type="text" id="project-owner" class="w-full px-4 py-2.5 rounded-lg border border-[#E5E5E5] focus:border-junpin focus:outline-none" placeholder="请输入负责人">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-[#333333] mb-2">所属部门 *</label>
+                    <select id="project-dept" class="w-full px-4 py-2.5 rounded-lg border border-[#E5E5E5] focus:border-junpin focus:outline-none">
+                      <option value="">请选择部门</option>
+                      <option value="业务部门A">业务部门A</option>
+                      <option value="技术中心">技术中心</option>
+                      <option value="信息中心">信息中心</option>
+                      <option value="供应链部">供应链部</option>
+                      <option value="研发中心">研发中心</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-5">
+                  <div>
+                    <label class="block text-sm font-medium text-[#333333] mb-2">开始日期 *</label>
+                    <input type="date" id="project-start" class="w-full px-4 py-2.5 rounded-lg border border-[#E5E5E5] focus:border-junpin focus:outline-none">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-[#333333] mb-2">结束日期 *</label>
+                    <input type="date" id="project-end" class="w-full px-4 py-2.5 rounded-lg border border-[#E5E5E5] focus:border-junpin focus:outline-none">
+                  </div>
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-medium text-[#333333] mb-2">预算金额（万元）</label>
+                  <input type="number" id="project-budget" class="w-full px-4 py-2.5 rounded-lg border border-[#E5E5E5] focus:border-junpin focus:outline-none" placeholder="请输入预算金额">
+                </div>
+                
+                <div>
+                  <label class="block text-sm font-medium text-[#333333] mb-2">项目描述</label>
+                  <textarea id="project-desc" rows="4" class="w-full px-4 py-2.5 rounded-lg border border-[#E5E5E5] focus:border-junpin focus:outline-none" placeholder="请输入项目描述"></textarea>
+                </div>
+              </div>
+              
+              <div class="flex items-center justify-end gap-3 mt-8 pt-6 border-t border-[#E5E5E5]">
+                <button onclick="closeCreateModal()" class="px-4 py-2 rounded-lg border border-[#E5E5E5] text-[#666666] hover:text-[#333333] transition-colors">
+                  取消
+                </button>
+                <button onclick="createProject()" class="btn-junpin px-6 py-2.5 rounded-lg text-white">
+                  创建项目
+                </button>
               </div>
             </div>
           </div>
@@ -487,6 +757,32 @@
     </div>
 
     <script>
+      let selectedTemplateType = null;
+      
+      const templateNames = {
+        'intelligent': '智能化升级',
+        'construction': '工程建设',
+        'digital': '数字化转型'
+      };
+      
+      const templateDefaults = {
+        'intelligent': {
+          name: '智能化升级项目',
+          budget: '500',
+          desc: '本项目旨在通过智能化技术改造现有设备和系统，提升生产效率和管理水平。主要包括设备采购、安装调试、人员培训等内容。'
+        },
+        'construction': {
+          name: '工程建设项目',
+          budget: '2000',
+          desc: '本项目为基础设施建设项目，包括立项审批、招投标、施工管理、竣工验收等全流程管理。'
+        },
+        'digital': {
+          name: '数字化转型项目',
+          budget: '800',
+          desc: '本项目通过信息化手段实现业务数字化转型，包括需求分析、系统开发、测试上线、运维保障等阶段。'
+        }
+      };
+
       function showPage(page) {
         // 隐藏所有页面
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -579,6 +875,99 @@
         
         event.target.classList.add('tab-active');
         document.getElementById('detail-' + tab).classList.add('active');
+      }
+      
+      // 新增项目相关函数
+      function openCreateModal() {
+        document.getElementById('create-modal').classList.add('active');
+        goToTemplateStep();
+      }
+      
+      function closeCreateModal() {
+        document.getElementById('create-modal').classList.remove('active');
+        selectedTemplateType = null;
+      }
+      
+      function selectTemplate(type) {
+        openCreateModal();
+        selectTemplateType(type);
+      }
+      
+      function selectTemplateType(type) {
+        // 移除所有选中状态
+        document.querySelectorAll('.template-card').forEach(card => {
+          card.classList.remove('selected');
+        });
+        
+        // 选中当前模板
+        const card = document.getElementById('template-' + type);
+        if (card) {
+          card.classList.add('selected');
+        }
+        
+        selectedTemplateType = type;
+        
+        // 启用下一步按钮
+        const nextBtn = document.getElementById('next-to-form');
+        nextBtn.disabled = false;
+        nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+      
+      function goToTemplateStep() {
+        document.getElementById('step-template').classList.remove('hidden');
+        document.getElementById('step-form').classList.add('hidden');
+        
+        // 重置选中状态
+        selectedTemplateType = null;
+        document.querySelectorAll('.template-card').forEach(card => {
+          card.classList.remove('selected');
+        });
+        
+        // 禁用下一步按钮
+        const nextBtn = document.getElementById('next-to-form');
+        nextBtn.disabled = true;
+        nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      }
+      
+      function goToFormStep() {
+        if (!selectedTemplateType) return;
+        
+        document.getElementById('step-template').classList.add('hidden');
+        document.getElementById('step-form').classList.remove('hidden');
+        
+        // 更新选中模板名称
+        document.getElementById('selected-template-name').textContent = templateNames[selectedTemplateType];
+        
+        // 预填模板内容
+        const defaults = templateDefaults[selectedTemplateType];
+        document.getElementById('project-name').value = defaults.name;
+        document.getElementById('project-budget').value = defaults.budget;
+        document.getElementById('project-desc').value = defaults.desc;
+        
+        // 设置默认日期（今天开始，90天后结束）
+        const today = new Date();
+        const endDate = new Date();
+        endDate.setDate(endDate.getDate() + 90);
+        
+        document.getElementById('project-start').value = today.toISOString().split('T')[0];
+        document.getElementById('project-end').value = endDate.toISOString().split('T')[0];
+      }
+      
+      function createProject() {
+        const name = document.getElementById('project-name').value;
+        const owner = document.getElementById('project-owner').value;
+        const dept = document.getElementById('project-dept').value;
+        const start = document.getElementById('project-start').value;
+        const end = document.getElementById('project-end').value;
+        
+        if (!name || !owner || !dept || !start || !end) {
+          alert('请填写所有必填项');
+          return;
+        }
+        
+        // 模拟创建成功
+        alert('项目创建成功！项目名称：' + name);
+        closeCreateModal();
       }
     </script>
   </body>
